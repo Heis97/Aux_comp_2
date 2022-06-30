@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{07127452-EEB3-45DE-88BC-B9C941EFAC0F}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Aux_comp_2</RootNamespace>
+    <AssemblyName>Aux_comp_2</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="OpenGL.Net, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenGL.Net.0.8.4\lib\net461\OpenGL.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenGL.Net.Math, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenGL.Net.Math.0.8.4\lib\net461\OpenGL.Net.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenGL.Net.WinForms, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenGL.Net.WinForms.0.8.4\lib\net461\OpenGL.Net.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.3.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.3.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AuxComp\AuxInit.cs" />
+    <Compile Include="Geometry\Flat3d_GL.cs" />
+    <Compile Include="Geometry\Flat_4P.cs" />
+    <Compile Include="Geometry\Line3d_GL.cs" />
+    <Compile Include="Geometry\LineF.cs" />
+    <Compile Include="Geometry\Point3d_GL.cs" />
+    <Compile Include="Geometry\PointF.cs" />
+    <Compile Include="Geometry\Vector3d_GL.cs" />
+    <Compile Include="Graphic\BuffersGl.cs" />
+    <Compile Include="Graphic\GraphicGL.cs" />
+    <Compile Include="Graphic\openGlobj.cs" />
+    <Compile Include="Graphic\TransRotZoom.cs" />
+    <Compile Include="Model\GeometryUtil.cs" />
+    <Compile Include="Model\Model3d.cs" />
+    <Compile Include="Model\STLtoOBJ.cs" />
+    <Compile Include="Objects\Objects.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scene.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Scene.Designer.cs">
+      <DependentUpon>Scene.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Scene.resx">
+      <DependentUpon>Scene.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Graphic\Shaders\Comp\CompSh.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Comp\CompSh_Aux_2d_ret.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Comp\CompSh_Aux_2d.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Comp\CompSh_Aux_1.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Comp\CompSh_N2_gravitation.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Comp\CompSh_Test1.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\DefoltBFShader\FragmSh.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_Models.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_ModelsC.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_One.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_OneC.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_Static.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\FragmSh.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\FragmSh_Simple.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\GeomSh_Lines.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\GeomSh_Points.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\GeomSh_Triangles.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\PointLineCol\FragmSh_SimpleC.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\PointLineCol\GeomSh_Lines.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\PointLineCol\GeomSh_Points.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\TriangleColTex\FragmShC.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\TriangleColTex\GeomSh_TrianglesC.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\TriangleColTex\VertexSh_ModelsC.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\TriangleColTex\VertexSh_ModelsOneC.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\VertexSh_Models.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\VertexSh_ModelsOne.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFWithGeomShader\VertexSh_Static.glsl" />
+    <None Include="Graphic\Shaders\Frag\FragmSh.glsl" />
+    <None Include="Graphic\Shaders\Frag\FragmSh_Simple.glsl" />
+    <None Include="Graphic\Shaders\Frag\TestSh.glsl" />
+    <None Include="Graphic\Shaders\Geom\GeomShL_head.glsl" />
+    <None Include="Graphic\Shaders\Geom\GeomShP_head.glsl" />
+    <None Include="Graphic\Shaders\Geom\GeomShT_head.glsl" />
+    <None Include="Graphic\Shaders\Geom\GeomSh_body - Копировать.glsl" />
+    <None Include="Graphic\Shaders\Geom\GeomSh_Lines.glsl" />
+    <None Include="Graphic\Shaders\Geom\GeomSh_Points.glsl" />
+    <None Include="Graphic\Shaders\Geom\GeomSh_Triangles.glsl" />
+    <None Include="Graphic\Shaders\Geom_R\GeomShL_head.glsl" />
+    <None Include="Graphic\Shaders\Geom_R\GeomShP_head.glsl" />
+    <None Include="Graphic\Shaders\Geom_R\GeomShT_head.glsl" />
+    <None Include="Graphic\Shaders\Geom_R\GeomSh_body.glsl" />
+    <None Include="Graphic\Shaders\GravitMap\Fragm.glsl" />
+    <None Include="Graphic\Shaders\GravitMap\Geom.glsl" />
+    <None Include="Graphic\Shaders\GravitMap\Vertex.glsl" />
+    <None Include="Graphic\Shaders\Orbite\FragmOrbite.glsl" />
+    <None Include="Graphic\Shaders\Orbite\GeomOrbite.glsl" />
+    <None Include="Graphic\Shaders\Orbite\VertexOrbite.glsl" />
+    <None Include="Graphic\Shaders\Vert\TestSh.glsl" />
+    <None Include="Graphic\Shaders\Vert\VertexSh.glsl" />
+    <None Include="Graphic\Shaders\Vert\VertexSh_Models.glsl" />
+    <None Include="Graphic\Shaders\Vert\VertexSh_ModelsOne.glsl" />
+    <None Include="Graphic\Shaders\Vert\VertexSh_Static.glsl" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
