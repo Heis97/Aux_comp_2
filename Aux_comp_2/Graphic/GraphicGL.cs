@@ -137,10 +137,17 @@ namespace Graphic
         public int cur_l_ID;
         public int sizeXY_ID;
 
+        public int limits_l_norm_ID;
+        public int limits_t_norm_ID;
+
         public int pore_size_inp_ID;
         public int porosity_inp_ID;
 
+        public int type_comp_ID;
+
     }
+
+
     public class GraphicGL
     {
         #region vars
@@ -183,7 +190,7 @@ namespace Graphic
 
 
 
-        TextureGL posTimeData, chooseData, objData, auxData, auxData_2d_in;
+        TextureGL posTimeData, chooseData, objData,auxData_2d_in;
 
         
         public ObjectMassGL[] dataComputeShader = new ObjectMassGL[0];
@@ -198,22 +205,28 @@ namespace Graphic
         IDs idsAux_comp_map = new IDs();
         IDs idsAux_ret = new IDs();
 
-        TextureGL auxData_2d_out, porosity_map;
+        TextureGL auxData_2d_out, porosity_map, auxData;
         Vertex2f limits_h = new Vertex2f(5f, 10f);
         Vertex2f limits_l = new Vertex2f(1f, 10f);
         Vertex2f limits_t = new Vertex2f(2f, 3f);
         Vertex2f limits_theta = new Vertex2f(10f, 80f);
+
+
 
         Vertex2f limits_l_norm = new Vertex2f(1f, 10f);
         Vertex2f limits_t_norm = new Vertex2f(2f, 3f);
 
         Vertex4i sizeXY = new Vertex4i(1, 1, 1, 1);
         int qual_comp = 100;
-        int qual_map = 250;
-        int depth_map = 30;
+        int qual_map = 50;
+        int depth_map = 1000;
+        int type_comp = 1;
+
+        float limits_ext = 0.1f;
         public void glControl_Render(object sender, GlControlEventArgs e)
         {
             gpuCompute_Aux();
+            gpuCompute_Aux_ret(85.52f, 0.3f);
         }
         public void glControl_ContextCreated(object sender, GlControlEventArgs e)
         {
@@ -224,73 +237,24 @@ namespace Graphic
             #endregion
 
             #region loadShaders
-            var ComputeSourceGL = assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d.glsl" });
-            idsAux_comp_map.programID = createShaderCompute(ComputeSourceGL);
+            idsAux_comp_map.programID = createShaderCompute(assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d.glsl" }));
             init_vars_gl(idsAux_comp_map);
+
+            idsAux_ret.programID = createShaderCompute(assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d_ret.glsl" }));
+            init_vars_gl(idsAux_ret);
 
             #endregion
 
-            init_textures_aux_2d(qual_comp);
+            init_textures_aux_2d();
             Gl.Enable(EnableCap.DepthTest);
         }
-        static float[] getDataFromObjs(ObjectMassGL[] objects)
-        {
-            var len = ObjectMassGL.getLength();
-            var data = new float[objects.Length * len];
-            for(int i=0;i< objects.Length;i++)
-            {
-                var obData = objects[i].getData();
-                for (int j = 0; j < len; j++)
-                {
-                    data[len * i + j] = obData[j];
-                }
-            }
-            return data;
-        }
-
-        public void SortObj()
-        {
-            buffersGl.sortObj();
-            if (buffersGl.objs_static != null)
-            {
-                if (buffersGl.objs_static.Count != 0)
-                {
-                    for(int i=0; i< buffersGl.objs_static.Count;i++)
-                    {
-                        buffersGl.objs_static[i] = buffersGl.objs_static[i].setBuffersObj();
-                    }
-                }
-            }
-        }
-
-        private bool init_textures(float[] data)
+   
+        private bool init_textures_aux_2d()
         {
 
-
-            var len = ObjectMassGL.getLength();
-
-            objData = new TextureGL(0, len/4, data.Length / len, PixelFormat.Rgba, data);
-            posTimeData = new TextureGL(1, orb_p_count, data.Length/len ,  PixelFormat.Rgba);
-            chooseData = new TextureGL(2, 2, data.Length / len, PixelFormat.Rgba);
-
-
-            return true;
-        }
-
-        private bool init_textures_aux(ObjectAuxGL[] data_aux)
-        {
-            var data = ObjectAuxGL.getDataFromObjs(data_aux);
-            var len = ObjectAuxGL.getLength();
-            auxData = new TextureGL(0,len / 4, data_aux.Length,  PixelFormat.Rgba, data);
-            Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
-            return true;
-        }
-
-        private bool init_textures_aux_2d(int qual)
-        {
-
-            auxData_2d_out = new TextureGL(0, depth_map, 1, PixelFormat.Rgba);
+            auxData_2d_out = new TextureGL(0, depth_map, 3, PixelFormat.Rgba);
             porosity_map = new TextureGL(1, qual_map, depth_map, PixelFormat.Rgba);
+            auxData = new TextureGL(2, qual_map, qual_map, PixelFormat.Rgba);
             //Console.WriteLine(toStringBuf(auxData_2d_out.getData(), qual * 4, 4, "aux_2d"));
             return true;
         }
@@ -306,28 +270,66 @@ namespace Graphic
             ids.cur_l_ID = Gl.GetUniformLocation(ids.programID, "cur_l");
             ids.sizeXY_ID = Gl.GetUniformLocation(ids.programID, "sizeXY");
 
+            ids.limits_l_norm_ID = Gl.GetUniformLocation(ids.programID, "limits_l_norm");
+            ids.limits_t_norm_ID = Gl.GetUniformLocation(ids.programID, "limits_t_norm");
 
+            ids.porosity_inp_ID = Gl.GetUniformLocation(ids.programID, "porosity_inp");
+            ids.pore_size_inp_ID = Gl.GetUniformLocation(ids.programID, "pore_size_inp");
+
+            ids.type_comp_ID = Gl.GetUniformLocation(ids.programID, "type_comp");
         }
-        private void load_vars_gl(IDs ids)
+        void initLimits()
         {
+            if (type_comp == 0)
+            {
+                limits_h = new Vertex2f(5f, 10f);
+                limits_l = new Vertex2f(1f, 10f);
+                limits_t = new Vertex2f(2f, 3f);
+                limits_theta = new Vertex2f(10f, 80f);
+            }
+            if (type_comp == 1)
+            {
+                limits_h = new Vertex2f(19f, 24f);
+                limits_l = new Vertex2f(5f, 14f);
+                limits_t = new Vertex2f(1f, 1.5f);
+                limits_theta = new Vertex2f(10f, 90f);
+            }
+            limits_h.x *= (1 - limits_ext);         limits_h.y *= (1 + limits_ext);
+            limits_l.x *= (1 - limits_ext);         limits_l.y *= (1 + limits_ext);
+            limits_t.x *= (1 - limits_ext);         limits_t.y *= (1 + limits_ext);
+            limits_theta.x *= (1 - limits_ext);     limits_theta.y *= (1 + limits_ext);
+        }
+
+        private void load_vars_gl(IDs ids, float porosity = 0, float pore_size = 0)
+        {
+            
             Gl.UseProgram(ids.programID);
 
             Gl.Uniform2f(ids.limits_h_ID, 1, limits_h);
-            Gl.Uniform2f(ids.limits_l_ID, 1, limits_l_norm);
-            Gl.Uniform2f(ids.limits_t_ID, 1, limits_t_norm);
+            Gl.Uniform2f(ids.limits_l_ID, 1, limits_l);
+            Gl.Uniform2f(ids.limits_t_ID, 1, limits_t);
             Gl.Uniform2f(ids.limits_theta_ID, 1, limits_theta);
             Gl.Uniform4i(ids.sizeXY_ID, 1, sizeXY);
             Gl.Uniform1f(ids.cur_l_ID, 1, 1f);
+
+            Gl.Uniform2f(ids.limits_l_norm_ID, 1, limits_l_norm);
+            Gl.Uniform2f(ids.limits_t_norm_ID, 1, limits_t_norm);
+
+
+            Gl.Uniform1f(ids.porosity_inp_ID, 1, porosity);
+            Gl.Uniform1f(ids.pore_size_inp_ID, 1, pore_size);
+
+            Gl.Uniform1i(ids.type_comp_ID, 1, type_comp);
         }
 
         private void load_vars_intern_gl(IDs ids,float cur_l)
         {
-            Gl.UseProgram(ids.programID);
-
             Gl.Uniform1f(ids.cur_l_ID, 1, cur_l);
         }
         void gpuCompute_Aux()
         {
+            initLimits();
+
             limits_l_norm.x = limits_l.x/ limits_h.x;
             limits_l_norm.y = limits_l.y / limits_h.y;
 
@@ -339,31 +341,89 @@ namespace Graphic
             load_vars_gl(idsAux_comp_map);
             for (int i =0; i< qual_comp; i++)
             {
-                float l = limits_l.x + (limits_l.y - limits_l.x)*(float)i / (float)qual_comp;
+                float l = limits_l_norm.x + (limits_l_norm.y - limits_l_norm.x)*(float)i / (float)qual_comp;
                 load_vars_intern_gl(idsAux_comp_map, l);
-                Gl.DispatchCompute((uint)auxData_2d_out.w, (uint)auxData_2d_out.h, 1);
-                Gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);                
-                Console.WriteLine("map create____________________"+(i+1)+"/"+ qual_comp + " done");
+                Gl.DispatchCompute((uint)sizeXY.x, (uint)sizeXY.x, 1);
+                Gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);
+                Console.WriteLine(toStringBuf(auxData.getData(), qual_map * 4, 4, "porosity_map"));
+                Console.WriteLine("map create____________________"+(i+1)+"/"+ qual_comp + " done ");
             }
-            var map_por = porosity_map.getData();
+            //var map_por = porosity_map.getData();
+            
             Console.WriteLine(toStringBuf(porosity_map.getData(),qual_map * 4, 4, "porosity_map"));
-            Console.WriteLine("_______________________");
+            //Console.WriteLine("_______________________");
             //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
         }
 
-        void gpuCompute_Aux_ret()
+        void gpuCompute_Aux_ret(float porosity = 1, float pore_size = 1)
         {
 
-            load_vars_gl(idsAux_ret);
-
-            Gl.DispatchCompute((uint)auxData_2d_out.w, (uint)auxData_2d_out.h, 1);
+            load_vars_gl(idsAux_ret, porosity, pore_size);
+            Gl.DispatchCompute(1, 1, 1);
             Gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);
 
-            //var map_por = porosity_map.getData();
-           // Console.WriteLine(toStringBuf(porosity_map.getData(), qual_map * 4, 4, "porosity_map"));
+            Console.WriteLine(toStringBuf(auxData_2d_out.getData(), depth_map * 4,  4, "porosity_solve"));
             Console.WriteLine("_______________________");
             //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
         }
+        #region old
+        static float[] getDataFromObjs(ObjectMassGL[] objects)
+        {
+            var len = ObjectMassGL.getLength();
+            var data = new float[objects.Length * len];
+            for (int i = 0; i < objects.Length; i++)
+            {
+                var obData = objects[i].getData();
+                for (int j = 0; j < len; j++)
+                {
+                    data[len * i + j] = obData[j];
+                }
+            }
+            return data;
+        }
+        private bool init_textures_aux(ObjectAuxGL[] data_aux)
+        {
+            var data = ObjectAuxGL.getDataFromObjs(data_aux);
+            var len = ObjectAuxGL.getLength();
+            auxData = new TextureGL(0, len / 4, data_aux.Length, PixelFormat.Rgba, data);
+            Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
+            return true;
+        }
+
+        private bool init_textures(float[] data)
+        {
+
+
+            var len = ObjectMassGL.getLength();
+
+            objData = new TextureGL(0, len / 4, data.Length / len, PixelFormat.Rgba, data);
+            posTimeData = new TextureGL(1, orb_p_count, data.Length / len, PixelFormat.Rgba);
+            chooseData = new TextureGL(2, 2, data.Length / len, PixelFormat.Rgba);
+
+
+            return true;
+        }
+
+        public void SortObj()
+        {
+            buffersGl.sortObj();
+            if (buffersGl.objs_static != null)
+            {
+                if (buffersGl.objs_static.Count != 0)
+                {
+                    for (int i = 0; i < buffersGl.objs_static.Count; i++)
+                    {
+                        buffersGl.objs_static[i] = buffersGl.objs_static[i].setBuffersObj();
+                    }
+                }
+            }
+        }
+        #endregion
+
+
+
+
+
 
         #region texture
 
