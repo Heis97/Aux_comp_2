@@ -32,25 +32,34 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenGL.Net, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenGL.Net.0.8.4\lib\net461\OpenGL.Net.dll</HintPath>
-    </Reference>
     <Reference Include="OpenGL.Net.Math, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenGL.Net.Math.0.8.4\lib\net461\OpenGL.Net.Math.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenGL.Net.WinForms, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenGL.Net.WinForms.0.8.4\lib\net461\OpenGL.Net.WinForms.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\OpenGL.Net.Math.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.3.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.3.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -116,12 +125,24 @@
     <None Include="Graphic\Shaders\Comp\CompSh_Test1.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Graphic\Shaders\DefoltBFShader\FragmSh.glsl" />
-    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_Models.glsl" />
-    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_ModelsC.glsl" />
-    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_One.glsl" />
-    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_OneC.glsl" />
-    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_Static.glsl" />
+    <None Include="Graphic\Shaders\DefoltBFShader\FragmSh.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_Models.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_ModelsC.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_One.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_OneC.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\DefoltBFShader\VertexSh_Static.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Graphic\Shaders\DefoltBFWithGeomShader\FragmSh.glsl" />
     <None Include="Graphic\Shaders\DefoltBFWithGeomShader\FragmSh_Simple.glsl" />
     <None Include="Graphic\Shaders\DefoltBFWithGeomShader\GeomSh_Lines.glsl" />
@@ -137,16 +158,36 @@
     <None Include="Graphic\Shaders\DefoltBFWithGeomShader\VertexSh_Models.glsl" />
     <None Include="Graphic\Shaders\DefoltBFWithGeomShader\VertexSh_ModelsOne.glsl" />
     <None Include="Graphic\Shaders\DefoltBFWithGeomShader\VertexSh_Static.glsl" />
-    <None Include="Graphic\Shaders\Frag\FragmSh.glsl" />
-    <None Include="Graphic\Shaders\Frag\FragmSh_Simple.glsl" />
-    <None Include="Graphic\Shaders\Frag\TestSh.glsl" />
-    <None Include="Graphic\Shaders\Geom\GeomShL_head.glsl" />
-    <None Include="Graphic\Shaders\Geom\GeomShP_head.glsl" />
-    <None Include="Graphic\Shaders\Geom\GeomShT_head.glsl" />
-    <None Include="Graphic\Shaders\Geom\GeomSh_body - Копировать.glsl" />
-    <None Include="Graphic\Shaders\Geom\GeomSh_Lines.glsl" />
-    <None Include="Graphic\Shaders\Geom\GeomSh_Points.glsl" />
-    <None Include="Graphic\Shaders\Geom\GeomSh_Triangles.glsl" />
+    <None Include="Graphic\Shaders\Frag\FragmSh.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Frag\FragmSh_Simple.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Frag\TestSh.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Geom\GeomShL_head.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Geom\GeomShP_head.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Geom\GeomShT_head.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Geom\GeomSh_body - Копировать.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Geom\GeomSh_Lines.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Geom\GeomSh_Points.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Geom\GeomSh_Triangles.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Graphic\Shaders\Geom_R\GeomShL_head.glsl" />
     <None Include="Graphic\Shaders\Geom_R\GeomShP_head.glsl" />
     <None Include="Graphic\Shaders\Geom_R\GeomShT_head.glsl" />
@@ -157,12 +198,21 @@
     <None Include="Graphic\Shaders\Orbite\FragmOrbite.glsl" />
     <None Include="Graphic\Shaders\Orbite\GeomOrbite.glsl" />
     <None Include="Graphic\Shaders\Orbite\VertexOrbite.glsl" />
-    <None Include="Graphic\Shaders\Vert\TestSh.glsl" />
-    <None Include="Graphic\Shaders\Vert\VertexSh.glsl" />
-    <None Include="Graphic\Shaders\Vert\VertexSh_Models.glsl" />
-    <None Include="Graphic\Shaders\Vert\VertexSh_ModelsOne.glsl" />
-    <None Include="Graphic\Shaders\Vert\VertexSh_Static.glsl" />
-    <None Include="packages.config" />
+    <None Include="Graphic\Shaders\Vert\TestSh.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Vert\VertexSh.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Vert\VertexSh_Models.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Vert\VertexSh_ModelsOne.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Vert\VertexSh_Static.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -175,6 +225,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="OpenGL.Net">
+      <Version>0.8.4</Version>
+    </PackageReference>
+    <PackageReference Include="OpenGL.Net.WinForms">
+      <Version>0.8.4</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

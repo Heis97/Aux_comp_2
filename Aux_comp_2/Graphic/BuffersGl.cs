@@ -12,7 +12,7 @@ namespace Graphic
     public class BuffersGl
     {
         public int countObj = 0;
-        List<openGlobj> objs;
+        public List<openGlobj> objs;
         public List<openGlobj> objs_dynamic;
         public List<openGlobj> objs_static;
         public BuffersGl()
@@ -35,6 +35,59 @@ namespace Graphic
                 return -1;
             }
                
+        }
+
+        public void add_obj_id(float[] data_v, int id, bool visible, PrimitiveType primitiveType)
+        {
+            int ind = 0;
+            if (data_v == null)
+            {
+                return;
+            }
+            if (objs.Count != 0)
+            {
+                foreach (var ob in objs_dynamic)
+                {
+                    if (ob.id == id)
+                    {
+                        var lam_obj = ob;
+                        if (visible)
+                        {
+                            lam_obj.visible = true;
+                            var data_n_ = new float[data_v.Length];
+                            var data_c_ = new float[data_v.Length];
+                            for (int i = 0; i < data_v.Length; i++)
+                            {
+                                data_c_[i] = 1f;
+                                data_n_[i] = 1f;
+                            }
+                            lam_obj.vertex_buffer_data = data_v;
+                            lam_obj.color_buffer_data = data_c_;
+                            lam_obj.normal_buffer_data = data_n_;
+                            objs_dynamic[ind] = lam_obj;
+                            return;
+                        }
+                        else
+                        {
+                            lam_obj.visible = false;
+                            objs_dynamic[ind] = lam_obj;
+                            return;
+                        }
+
+                    }
+                    ind++;
+                }
+
+            }
+            var data_n = new float[data_v.Length];
+            var data_c = new float[data_v.Length];
+            for (int i = 0; i < data_v.Length; i++)
+            {
+                data_c[i] = 1f;
+                data_n[i] = 1f;
+            }
+            //Console.WriteLine("new ver " + id+" all "+ind);
+            add_obj(new openGlobj(data_v, data_c, data_n,null, primitiveType, id));
         }
         public void sortObj()
         {

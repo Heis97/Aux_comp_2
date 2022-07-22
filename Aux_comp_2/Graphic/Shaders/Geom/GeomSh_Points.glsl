@@ -33,7 +33,8 @@ void main()
    { 
 	    gl_ViewportIndex = gl_InvocationID;
 		gl_Position = VPs[gl_InvocationID] * vec4(vs_out[i].vertexPosition_world, 1.0);
-
+		//gl_Position = VPs[gl_InvocationID] * vec4(0,0,0, 1.0);
+		//gl_Position = vec4(0,0,-0.2, 0);
 	    fs_in.Position_world = gl_Position.xyz;
 	    fs_in.Color = vs_out[i].vertexColor;
 		fs_in.TextureUV = vs_out[i].vertexTexture;

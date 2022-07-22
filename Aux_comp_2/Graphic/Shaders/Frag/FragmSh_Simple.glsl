@@ -28,4 +28,6 @@ void main() {
 	    color.xyz = fs_in.Color;
 		color.w = 1.0;
 	}
+	//color.xyz = vec3(0.5,0.5,0.5);
+	color.w = 1.0;
 }

@@ -31,15 +31,18 @@ namespace Aux_gpu
         public void PreInitializeScene()
         {
             
+           
+
         }
 
+        
         #region gl_control
 
         private void glControl1_Render(object sender, GlControlEventArgs e)
         {
             GL1.glControl_Render(sender, e);
-        }
 
+        }
 
         private void glControl1_ContextCreated(object sender, GlControlEventArgs e)
         {
@@ -51,8 +54,7 @@ namespace Aux_gpu
             GL1.addMonitor(new Rectangle(0, 0, w, h), 0);
             GL1.SortObj();
         }
-
-        
+      
         private void GlControl1_MouseWheel(object sender, MouseEventArgs e)
         {
             GL1.Form1_mousewheel(sender, e);
@@ -70,5 +72,10 @@ namespace Aux_gpu
         }
         #endregion
 
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            var val = ((TrackBar)sender).Value;
+            GL1.show_cur_porose((float)val / 5f);
+        }
     }
 }

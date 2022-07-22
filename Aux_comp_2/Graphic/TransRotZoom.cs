@@ -29,25 +29,18 @@ namespace Graphic
             scale = _scale;
         }
 
-        public Matrix4x4f getModelMatrix(Vertex3f target)
+        public Matrix4x4f getModelMatrix()
         {
-           return  Matrix4x4f.Translated((float)transl.x-target.x, (float)transl.y - target.y, (float)transl.z - target.z) *
-                Matrix4x4f.RotatedX((float)rotate.x) *
-                Matrix4x4f.RotatedY((float)rotate.y) *
-                Matrix4x4f.RotatedZ((float)rotate.z) *
-                Matrix4x4f.Scaled(scale, scale, scale);
-        }
-
-        public Matrix4x4f getRotateMatrix()
-        {
-            return Matrix4x4f.RotatedX((float)rotate.x) *
+            return Matrix4x4f.Translated((float)transl.x, (float)transl.y, (float)transl.z) *
+                 Matrix4x4f.RotatedX((float)rotate.x) *
                  Matrix4x4f.RotatedY((float)rotate.y) *
-                 Matrix4x4f.RotatedZ((float)rotate.z);
-                
+                 Matrix4x4f.RotatedZ((float)rotate.z) *
+                 Matrix4x4f.Scaled(scale, scale, scale);
         }
 
 
     }
+
 
     public class TransRotZoom
     {
@@ -71,7 +64,7 @@ namespace Graphic
 
         public TransRotZoom(Rectangle _rect, int _id)
         {
-            zoom = -1e-1;
+            zoom = 100;
             xRot = 0;
             yRot = 0;
             zRot = 0;
@@ -80,8 +73,8 @@ namespace Graphic
             type = TRZtype.Master;
             viewType_ = viewType.Perspective;
             visible = false;
-            target = new Vertex3f(0, 0, 0);
-            pos = new Vertex3f(0, 0, -1e-1f);
+            target = new Vertex3f(0, 0, -10);
+            pos = new Vertex3f(0, 0, 10f);
             target_ind = 0;
             //localpos = new Vertex3f(0, 0, -5);
         }
@@ -269,22 +262,26 @@ namespace Graphic
 
             if (viewType_ == viewType.Perspective)
             {
-                var _Pm = Matrix4x4f.Perspective(53f, (float)rect.Width / rect.Height, -(float)zoom* 1e-1f, -(float)zoom *1e4f);
-                var _Vm = Matrix4x4f.Translated(0, 0, (float)zoom) *
+                var _Pm = Matrix4x4f.Perspective(53f, (float)rect.Width / rect.Height, 0.01f* (float)zoom ,  100f * (float)zoom);//-(float)zoom* 
+                var _Vm = Matrix4x4f.Translated(0, 0, -(float)zoom)*
                     Matrix4x4f.RotatedX((float)xRot) *
                     Matrix4x4f.RotatedY((float)yRot) *
-                    Matrix4x4f.RotatedZ((float)zRot);// *Matrix4x4f.Translated(-target.x, -target.y, -target.z);
-
-               /* var camDir = (pos - target).Normalized;
-                var vecu = new Vertex3f(0, 0, -1);
-                var rcam = cross(vecu, camDir).Normalized;
-                var ucam = cross(camDir, rcam).Normalized;
-                var loc4 = Matrix4x4f.RotatedX((float)xRot) *
-                    Matrix4x4f.RotatedY((float)yRot) *
-                    Matrix4x4f.RotatedZ((float)zRot)*  new Vertex4f((float)zoom, 0, 0,1);
-                localpos = new Vertex3f(loc4.x, loc4.y, loc4.z);
-                pos = target+localpos; 
-                _Vm = Matrix4x4f.LookAt(pos, target, ucam);*/
+                    Matrix4x4f.RotatedZ((float)zRot);// * Matrix4x4f.Translated(0, 0, 1 / (float)zoom); //*Matrix4x4f.Translated(-target.x, -target.y, -target.z);
+/*
+                var _Vm = Matrix4x4f.Translated(target.x, target.y, target.z);
+                Console.WriteLine(_Vm);
+                Console.WriteLine(_Pm);*/
+                //var _Vm = Matrix4x4f.Identity;
+                /* var camDir = (pos - target).Normalized;
+                 var vecu = new Vertex3f(0, 0, -1);
+                 var rcam = cross(vecu, camDir).Normalized;
+                 var ucam = cross(camDir, rcam).Normalized;
+                 var loc4 = Matrix4x4f.RotatedX((float)xRot) *
+                     Matrix4x4f.RotatedY((float)yRot) *
+                     Matrix4x4f.RotatedZ((float)zRot)*  new Vertex4f((float)zoom, 0, 0,1);
+                 localpos = new Vertex3f(loc4.x, loc4.y, loc4.z);
+                 pos = target+localpos; 
+                 _Vm = Matrix4x4f.LookAt(pos, target, ucam);*/
                 //var _PVm
                 return new Matrix4x4f[] { _Pm, _Vm, _Pm * _Vm };
             }

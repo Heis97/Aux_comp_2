@@ -32,6 +32,8 @@ namespace Aux_gpu
             this.glControl1 = new OpenGL.GlControl();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.label_fps = new System.Windows.Forms.Label();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // glControl1
@@ -39,6 +41,7 @@ namespace Aux_gpu
             this.glControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.glControl1.Animation = true;
             this.glControl1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.glControl1.ColorBits = ((uint)(24u));
             this.glControl1.DebugContext = OpenGL.GlControl.AttributePermission.DonCare;
@@ -47,7 +50,7 @@ namespace Aux_gpu
             this.glControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.glControl1.MultisampleBits = ((uint)(8u));
             this.glControl1.Name = "glControl1";
-            this.glControl1.Size = new System.Drawing.Size(411, 224);
+            this.glControl1.Size = new System.Drawing.Size(1900, 1039);
             this.glControl1.StencilBits = ((uint)(0u));
             this.glControl1.TabIndex = 0;
             this.glControl1.ContextCreated += new System.EventHandler<OpenGL.GlControlEventArgs>(this.glControl1_ContextCreated);
@@ -57,9 +60,9 @@ namespace Aux_gpu
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(1071, 12);
+            this.richTextBox1.Location = new System.Drawing.Point(1490, 12);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(821, 477);
+            this.richTextBox1.Size = new System.Drawing.Size(402, 477);
             this.richTextBox1.TabIndex = 1;
             this.richTextBox1.Text = "";
             this.richTextBox1.Visible = false;
@@ -76,16 +79,27 @@ namespace Aux_gpu
             this.label_fps.TabIndex = 2;
             this.label_fps.Text = "fps";
             // 
+            // trackBar1
+            // 
+            this.trackBar1.Location = new System.Drawing.Point(17, 984);
+            this.trackBar1.Maximum = 500;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(1875, 45);
+            this.trackBar1.TabIndex = 3;
+            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            // 
             // Scene
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(415, 226);
+            this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.label_fps);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.glControl1);
             this.Name = "Scene";
             this.Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -96,6 +110,7 @@ namespace Aux_gpu
         private OpenGL.GlControl glControl1;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Label label_fps;
+        private System.Windows.Forms.TrackBar trackBar1;
     }
 }
 

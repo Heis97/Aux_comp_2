@@ -201,9 +201,16 @@ namespace Graphic
 
 
         #endregion
+        IDs idsPs = new IDs();
+        IDs idsLs = new IDs();
+        IDs idsTs = new IDs();
+        IDs idsTsOne = new IDs();
+        IDs idsPsOne = new IDs();
+        IDs idsLsOne = new IDs();
 
         IDs idsAux_comp_map = new IDs();
         IDs idsAux_ret = new IDs();
+
 
         TextureGL auxData_2d_out, porosity_map, auxData;
         Vertex2f limits_h = new Vertex2f(5f, 10f);
@@ -218,15 +225,119 @@ namespace Graphic
 
         Vertex4i sizeXY = new Vertex4i(1, 1, 1, 1);
         int qual_comp = 100;
-        int qual_map = 50;
-        int depth_map = 1000;
-        int type_comp = 1;
+        int qual_map = 100;
+        int depth_map = 30000;
+        int type_comp = 0;
 
         float limits_ext = 0.1f;
+
+        float[][] map_porose = null;
         public void glControl_Render(object sender, GlControlEventArgs e)
         {
-            gpuCompute_Aux();
-            gpuCompute_Aux_ret(85.52f, 0.3f);
+            VPs = new Matrix4x4f[4];
+            Vs = new Matrix4x4f[4];
+            Ps = new Matrix4x4f[4];
+            var txt = "";
+            for (int i = 0; i < transRotZooms.Count; i++)
+            {
+                Gl.ViewportIndexed((uint)i,
+                    transRotZooms[i].rect.X,
+                    transRotZooms[i].rect.Y,
+                    transRotZooms[i].rect.Width,
+                    transRotZooms[i].rect.Height);
+                var retM = transRotZooms[i].getVPmatrix();
+                VPs[i] = retM[2];
+                Vs[i] = retM[1];
+                Ps[i] = retM[0];
+
+                txt += "TRZ " + i + ": " + transRotZooms[i].getInfo(transRotZooms.ToArray()).ToString() + "\n";
+                //Console.WriteLine(VPs[i] );
+                //Console.WriteLine(VPs[i]*new Vertex4f(0,0,0,1));
+               //Console.WriteLine(txt);
+            }
+
+            Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            if (buffersGl.objs_static != null)
+            {
+                if (buffersGl.objs_static.Count != 0)
+                {
+                    foreach (var opglObj in buffersGl.objs_static)
+                    {
+                        renderGlobj(opglObj);
+                    }
+                }
+            }
+
+            if (buffersGl.objs_dynamic != null)
+            {
+                if (buffersGl.objs_dynamic.Count != 0)
+                {
+                    foreach (var opglObj in buffersGl.objs_dynamic)
+                    {
+                        renderGlobj(opglObj);
+                    }
+                }
+            }
+
+            rendercout++;
+            if (rendercout % renderdelim == 0)
+            {
+                rendercout = 0;
+            }
+        }
+
+        void renderGlobj(openGlobj opgl_obj)
+        {
+            if (opgl_obj.visible)
+            {
+                try
+                {
+                    var ids = new IDs();
+                    if (opgl_obj.tp == PrimitiveType.Points)
+                    {
+                        ids = idsPs;
+                        if (opgl_obj.count == 1)
+                        {
+                            ids = idsPsOne;
+                           // Console.WriteLine("points one opgl_obj.vert_len");
+                            //Console.WriteLine(opgl_obj.vert_len);
+                        }
+                    }
+                    else if (opgl_obj.tp == PrimitiveType.Triangles)
+                    {
+                        ids = idsTs;
+                        if (opgl_obj.count == 1)
+                        {
+                            ids = idsTsOne;
+                        }
+                    }
+                    else if (opgl_obj.tp == PrimitiveType.Lines)
+                    {
+                        ids = idsLs;
+                        if (opgl_obj.count == 1)
+                        {
+                            ids = idsLsOne;
+                        }
+                    }
+                    
+                    load_vars_gl(ids, opgl_obj);
+                    opgl_obj.useBuffers();
+                    if (opgl_obj.count > 1)
+                    {
+                        opgl_obj.loadModels();
+                        Gl.DrawArraysInstanced(opgl_obj.tp, 0, opgl_obj.vert_len, opgl_obj.count);
+                    }
+                    else
+                    {
+                        Gl.DrawArrays(opgl_obj.tp, 0, opgl_obj.vert_len);
+                        
+                    }
+                }
+                catch
+                {
+                }
+            }   
         }
         public void glControl_ContextCreated(object sender, GlControlEventArgs e)
         {
@@ -234,9 +345,44 @@ namespace Graphic
             sizeControl = ((Control)sender).Size;
             Gl.Initialize();
             Gl.Enable(EnableCap.Multisample);
+            Gl.ClearColor(0.9f, 0.9f, 0.95f, 0.0f);
+            Gl.PointSize(1f);
+            Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            Gl.Enable(EnableCap.DepthTest);
             #endregion
 
             #region loadShaders
+
+            var VertexSourceGL = assembCode(new string[] { @"Graphic\Shaders\Vert\VertexSh_Models.glsl" });
+            var VertexOneSourceGL = assembCode(new string[] { @"Graphic\Shaders\Vert\VertexSh_ModelsOne.glsl" });
+
+            var FragmentSourceGL = assembCode(new string[] { @"Graphic\Shaders\Frag\FragmSh.glsl" });
+            var FragmentSimpleSourceGL = assembCode(new string[] { @"Graphic\Shaders\Frag\FragmSh_Simple.glsl" });
+
+            var GeometryShaderPointsGL = assembCode(new string[] { @"Graphic\Shaders\Geom\GeomSh_Points.glsl" });
+            var GeometryShaderLinesGL = assembCode(new string[] { @"Graphic\Shaders\Geom\GeomSh_Lines.glsl" });
+            var GeometryShaderTrianglesGL = assembCode(new string[] { @"Graphic\Shaders\Geom\GeomSh_Triangles.glsl" });
+
+
+            idsLs.programID = createShader(VertexSourceGL, GeometryShaderLinesGL, FragmentSimpleSourceGL);
+            idsLsOne.programID = createShader(VertexOneSourceGL, GeometryShaderLinesGL, FragmentSimpleSourceGL);
+
+            idsPs.programID = createShader(VertexSourceGL, GeometryShaderPointsGL, FragmentSimpleSourceGL);
+            idsPsOne.programID = createShader(VertexOneSourceGL, GeometryShaderPointsGL, FragmentSimpleSourceGL);
+
+            idsTs.programID = createShader(VertexSourceGL, GeometryShaderTrianglesGL, FragmentSourceGL);
+            idsTsOne.programID = createShader(VertexOneSourceGL, GeometryShaderTrianglesGL, FragmentSourceGL);
+
+            //idsCs.programID = createShaderCompute(ComputeSourceGL);
+
+            init_vars_gl(idsLs);
+            init_vars_gl(idsPs);
+            init_vars_gl(idsTs);
+            init_vars_gl(idsTsOne);
+            init_vars_gl(idsPsOne);
+            init_vars_gl(idsLsOne);
+
+
             idsAux_comp_map.programID = createShaderCompute(assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d.glsl" }));
             init_vars_gl(idsAux_comp_map);
 
@@ -245,10 +391,11 @@ namespace Graphic
 
             #endregion
 
-            init_textures_aux_2d();
-            Gl.Enable(EnableCap.DepthTest);
+            init_textures_aux_2d();           
+            gpuCompute_Aux();
+            gpuCompute_Aux_ret(85.52f, 0.3f);
         }
-   
+
         private bool init_textures_aux_2d()
         {
 
@@ -277,6 +424,29 @@ namespace Graphic
             ids.pore_size_inp_ID = Gl.GetUniformLocation(ids.programID, "pore_size_inp");
 
             ids.type_comp_ID = Gl.GetUniformLocation(ids.programID, "type_comp");
+
+            //-------------------------------------------
+
+            for (int i = 0; i < 4; i++)
+            {
+                ids.LocationVPs[i] = Gl.GetUniformLocation(ids.programID, "VPs[" + i + "]");
+                ids.LocationVs[i] = Gl.GetUniformLocation(ids.programID, "Vs[" + i + "]");
+                ids.LocationPs[i] = Gl.GetUniformLocation(ids.programID, "Ps[" + i + "]");
+            }
+            ids.LocationM = Gl.GetUniformLocation(ids.programID, "ModelMatrix");
+            ids.TextureID = Gl.GetUniformLocation(ids.programID, "textureSample");
+            ids.MaterialDiffuseID = Gl.GetUniformLocation(ids.programID, "MaterialDiffuse");
+            ids.MaterialAmbientID = Gl.GetUniformLocation(ids.programID, "MaterialAmbient");
+            ids.MaterialSpecularID = Gl.GetUniformLocation(ids.programID, "MaterialSpecular");
+            ids.LightID = Gl.GetUniformLocation(ids.programID, "LightPosition_world");
+            ids.LightPowerID = Gl.GetUniformLocation(ids.programID, "lightPower");
+            ids.textureVisID = Gl.GetUniformLocation(ids.programID, "textureVis");
+            ids.MouseLocID = Gl.GetUniformLocation(ids.programID, "MouseLoc");
+            ids.MouseLocGLID = Gl.GetUniformLocation(ids.programID, "MouseLocGL");
+            ids.colorOneID = Gl.GetUniformLocation(ids.programID, "colorOne");
+            ids.stindID = Gl.GetUniformLocation(ids.programID, "stind");
+            ids.targetCamID = Gl.GetUniformLocation(ids.programID, "targetCam");
+            ids.targetCamIndID = Gl.GetUniformLocation(ids.programID, "targetCamInd");
         }
         void initLimits()
         {
@@ -300,7 +470,7 @@ namespace Graphic
             limits_theta.x *= (1 - limits_ext);     limits_theta.y *= (1 + limits_ext);
         }
 
-        private void load_vars_gl(IDs ids, float porosity = 0, float pore_size = 0)
+        private void load_vars_gl(IDs ids, openGlobj openGlobj, float porosity = 0, float pore_size = 0)
         {
             
             Gl.UseProgram(ids.programID);
@@ -320,6 +490,33 @@ namespace Graphic
             Gl.Uniform1f(ids.pore_size_inp_ID, 1, pore_size);
 
             Gl.Uniform1i(ids.type_comp_ID, 1, type_comp);
+            //--------------------
+
+            if (openGlobj.count == 1)
+            {
+                var ModelMatr = openGlobj.trsc[0].getModelMatrix();
+               // Console.WriteLine(ModelMatr);
+                Gl.UniformMatrix4f(ids.LocationM, 1, false, ModelMatr);
+            }
+
+            //Console.WriteLine(ModelMatr);
+
+            for (int i = 0; i < transRotZooms.Count; i++)
+            {
+                Gl.UniformMatrix4f(ids.LocationVPs[i], 1, false, VPs[i]);
+                Gl.UniformMatrix4f(ids.LocationVs[i], 1, false, Vs[i]);
+                Gl.UniformMatrix4f(ids.LocationPs[i], 1, false, Ps[i]);
+            }
+
+            Gl.Uniform3f(ids.MaterialDiffuseID, 1, MaterialDiffuse);
+            Gl.Uniform3f(ids.MaterialAmbientID, 1, MaterialAmbient);
+            Gl.Uniform3f(ids.MaterialSpecularID, 1, MaterialSpecular);
+            Gl.Uniform3f(ids.LightID, 1, lightPos);
+            Gl.Uniform1f(ids.LightPowerID, 1, LightPower);
+            Gl.Uniform2f(ids.MouseLocID, 1, MouseLoc);
+            Gl.Uniform2f(ids.MouseLocGLID, 1, MouseLocGL);
+            Gl.Uniform1i(ids.textureVisID, 1, textureVis);
+           // Gl.Uniform1i(ids.lightVisID, 1, lightVis);
         }
 
         private void load_vars_intern_gl(IDs ids,float cur_l)
@@ -338,34 +535,94 @@ namespace Graphic
 
             Console.WriteLine(limits_l.x + " " + limits_t.x);
             sizeXY = new Vertex4i(qual_comp, qual_comp,qual_map,depth_map);
-            load_vars_gl(idsAux_comp_map);
+            load_vars_gl(idsAux_comp_map,new openGlobj());
             for (int i =0; i< qual_comp; i++)
             {
                 float l = limits_l_norm.x + (limits_l_norm.y - limits_l_norm.x)*(float)i / (float)qual_comp;
                 load_vars_intern_gl(idsAux_comp_map, l);
                 Gl.DispatchCompute((uint)sizeXY.x, (uint)sizeXY.x, 1);
                 Gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);
-                Console.WriteLine(toStringBuf(auxData.getData(), qual_map * 4, 4, "porosity_map"));
+               // Console.WriteLine(toStringBuf(auxData.getData(), qual_map * 4, 4, "porosity_map"));
                 Console.WriteLine("map create____________________"+(i+1)+"/"+ qual_comp + " done ");
             }
-            //var map_por = porosity_map.getData();
-            
-            Console.WriteLine(toStringBuf(porosity_map.getData(),qual_map * 4, 4, "porosity_map"));
-            //Console.WriteLine("_______________________");
+            // var map_por = auxData.getData();
+
+            map_porose = reshape_map_porose(porosity_map.getData());
+            //Console.WriteLine(toStringBuf(porosity_map.getData(),qual_map * 4, 4, "porosity_map"));
+            Console.WriteLine("_______________________");
             //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
         }
 
         void gpuCompute_Aux_ret(float porosity = 1, float pore_size = 1)
         {
 
-            load_vars_gl(idsAux_ret, porosity, pore_size);
+            load_vars_gl(idsAux_ret,new openGlobj(), porosity, pore_size);
             Gl.DispatchCompute(1, 1, 1);
             Gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);
-
-            Console.WriteLine(toStringBuf(auxData_2d_out.getData(), depth_map * 4,  4, "porosity_solve"));
+            var ret = auxData_2d_out.getData();
+            Console.WriteLine(ret[0] + " " + ret[1] + " " + ret[2] + " " + ret[3] + " ");
+            //Console.WriteLine(toStringBuf(auxData_2d_out.getData(), depth_map * 4,  4, "porosity_solve"));
             Console.WriteLine("_______________________");
             //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
         }
+
+        public void show_cur_porose(float porose)
+        {
+            if(map_porose!=null)
+            {
+                int ind = (int)((porose*qual_map) / 100f);
+                if(map_porose.Length>ind)
+                {
+                    if(map_porose[ind]!=null)
+                    {
+                        buffersGl.objs_static = new List<openGlobj>();
+                        buffersGl.objs_dynamic = new List<openGlobj>();
+                        buffersGl.objs = new List<openGlobj>();
+                        addGlobalFrame(100);
+                        addMeshWithoutNorm(map_porose[ind], PrimitiveType.Points);
+                        SortObj();
+                        //add_buff_points_id(map_porose[ind],100);
+                        Console.WriteLine("points_add");
+                    }
+                   
+                }
+            }
+        }
+        
+        float[][] reshape_map_porose(float[] pores_map, bool normed = true, int strip =4)
+        {
+            var map_re = new float[qual_map][];
+            for(int i = 0; i < qual_map; i++)
+            {
+                int count = (int)pores_map[strip*(qual_map * (depth_map-1)+i)];
+                if (count>0)
+                {
+                    var sub_point = new float[count * 3];
+                    //Console.WriteLine("____________"+count+"________________");
+                    for (int j = 0; j < count; j++)
+                    {
+                        int ind = strip * (qual_map * (j) + i);
+                        sub_point[j * 3] = pores_map[ind+1];
+                        sub_point[j * 3 + 1] = pores_map[ind + 2];
+                        sub_point[j * 3 + 2] = pores_map[ind + 3];
+
+                        if(normed)
+                        {
+                            sub_point[j * 3] *= (100 / limits_l_norm.y);
+                            sub_point[j * 3 + 1] *= (100 / limits_t_norm.y);
+                            sub_point[j * 3 + 2] *= (100 / limits_theta.y);
+                        }
+                        //Console.WriteLine(sub_point[j * 3] + " " + sub_point[j * 3+1] + " " + sub_point[j * 3+2]);
+                    }
+                    map_re[i] = sub_point.ToArray();
+
+                }
+
+            }
+            return map_re;
+        }
+
+
         #region old
         static float[] getDataFromObjs(ObjectMassGL[] objects)
         {
@@ -413,7 +670,7 @@ namespace Graphic
                 {
                     for (int i = 0; i < buffersGl.objs_static.Count; i++)
                     {
-                        buffersGl.objs_static[i] = buffersGl.objs_static[i].setBuffersObj();
+                        buffersGl.objs_static[i] = buffersGl.objs_static[i].setBuffers();
                     }
                 }
             }
@@ -646,16 +903,48 @@ namespace Graphic
             var cont = (Control)sender;
             MouseLocGL = new Vertex2f((float)e.X / (0.5f * (float)cont.Width) - 1f, -((float)e.Y / (0.5f * (float)cont.Height) - 1f));
             int sel_trz = selectTRZ(e);
-            if(sel_trz < 0)
+            if (sel_trz < 0)
             {
                 return;
             }
             var trz = transRotZooms[sel_trz];
 
-            
+
             int w = trz.rect.Width;
             int h = trz.rect.Height;
+          
+                
+            var dx = e.X - lastPos.X;
+            var dy = e.Y - lastPos.Y;
+            double dyx = lastPos.Y - w / 2;
+            double dxy = lastPos.X - h / 2;
+            var delim = (Math.Sqrt(dy * dy + dx * dx) * Math.Sqrt(dxy * dxy + dyx * dyx));
+            double dz = 0;
+            if (delim != 0)
+            {
+                dz = (dy * dxy + dx * dyx) / delim;
 
+            }
+            else
+            {
+                dz = 0;
+            }
+            if (e.Button == MouseButtons.Left)
+            {
+                trz.xRot += dy;
+                trz.zRot += dx;
+                //trz.zRot += dz;
+
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                var flow_mul = 0.1f;
+                trz.target.x += flow_mul * Convert.ToSingle(dx);
+                trz.target.y += flow_mul * Convert.ToSingle(dy);
+            }
+            lastPos = e.Location;
+                
+            
             transRotZooms[sel_trz] = trz;
         }
         public void Form1_mousewheel(object sender, MouseEventArgs e)
@@ -673,13 +962,11 @@ namespace Graphic
             var angle = e.Delta;
             if (angle > 0)
             { 
-                    trz.zoom = 0.7 * trz.zoom;
- 
-                
+                    trz.zoom *= 0.7;                
             }
             else
             {
-                trz.zoom = 1.3 * trz.zoom;
+                trz.zoom /= 0.7;
             }
             transRotZooms[sel_trz] = trz;
         }
@@ -807,57 +1094,6 @@ namespace Graphic
         #endregion
         #region mesh
  
-        public ObjectMassGL[] loadObjs(ObjectMassGL[] objects, Model3d[] models)
-        {
-            var objects_s = new ObjectMassGL[objects.Length];//для O(m*n)->O(n) ипользовать двумерный массив
-            int ind = 0;
-            model_count = models.Length;
-            for (int i =0; i<models.Length;i++)
-            {
-                var cnt_ind = 0;
-                var st_ind = ind;
-                for (int j = 0; j < objects.Length; j++)
-                {
-                    if(objects[j].mesh_number == i)
-                    {
-                        objects_s[ind] = objects[j].Clone();
-                        ind++;
-                        cnt_ind++;
-                    }
-                }
-                loadModel(models[i], cnt_ind,st_ind,i);
-            }
-            var data = getDataFromObjs(objects_s);
-            //Console.WriteLine(toStringBuf(data, 32, "models"));
-            if (!initComputeShader)
-            {
-                initComputeShader = init_textures(data);
-            }
-            else
-            {
-                objData.setData(data);
-            }
-            return objects_s;
-        }
-
-
-
-        public void loadModel(Model3d model,int count, int st_ind, int model_ind)
-        {
-            if (count!=0)
-            {
-                if (model.normale == null)
-                {
-                    model.normale = computeNormals(model.mesh);  
-                }
-                var objgl = new openGlobj(model.mesh, null, model.normale, model.texture, PrimitiveType.Triangles, 1, count);
-                objgl.modelind = model_ind;
-                objgl.stind = st_ind;
-                buffersGl.add_obj(objgl.setBuffersObj());
-            } 
-        }
-
-        
         float[] toFloat(Point3d_GL[] points)
         {
             var fl = new float[points.Length * 3];
@@ -894,12 +1130,17 @@ namespace Graphic
             var data_n = computeNormals(data_v);
             var glObj = new openGlobj(data_v, null, data_n, null, tp,1,count);
       
-            return buffersGl.add_obj(glObj.setBuffersObj());
+            return buffersGl.add_obj(glObj.setBuffers());
         }
 
        void add_buff_gl_id(float[] data_v, float[] data_c, float[] data_n, PrimitiveType tp,int id)
         {
             buffersGl.add_obj(new openGlobj(data_v, data_c, data_n, null,tp,id));
+        }
+
+        void add_buff_points_id(float[] data_v,int id)
+        {
+            buffersGl.add_obj_id(data_v, id,true, PrimitiveType.Points);
         }
 
         void remove_buff_gl_id(int id)
@@ -913,7 +1154,12 @@ namespace Graphic
             addLineMesh(new Point3d_GL[] { pos, z }, 0, 0, 1.0f);
         }
 
-      
+        public void addGlobalFrame(double len)
+        {
+            addFrame(new Point3d_GL(0, 0, 0), new Point3d_GL(len, 0, 0), new Point3d_GL(0, len, 0), new Point3d_GL(0, 0, len));
+
+        }
+
         public void addGLMesh(float[] _mesh, PrimitiveType primitiveType, float x = 0, float y = 0, float z = 0, float r = 0.1f, float g = 0.1f, float b = 0.1f, float scale = 1f)
         {
             // addMesh(cube_buf, PrimitiveType.Points);
