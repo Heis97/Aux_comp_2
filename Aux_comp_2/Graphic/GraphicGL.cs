@@ -212,7 +212,7 @@ namespace Graphic
         IDs idsAux_ret = new IDs();
 
 
-        TextureGL auxData_2d_out, porosity_map, auxData;
+        TextureGL auxData_2d_out, porosity_map, auxData,porosity_data;
         Vertex2f limits_h = new Vertex2f(5f, 10f);
         Vertex2f limits_l = new Vertex2f(1f, 10f);
         Vertex2f limits_t = new Vertex2f(2f, 3f);
@@ -224,14 +224,16 @@ namespace Graphic
         Vertex2f limits_t_norm = new Vertex2f(2f, 3f);
 
         Vertex4i sizeXY = new Vertex4i(1, 1, 1, 1);
-        int qual_comp = 100;
-        int qual_map = 100;
-        int depth_map = 30000;
-        int type_comp = 0;
+        int qual_comp = 200;
+        int qual_map = 200;
+        int depth_map = 10000;
+        int type_comp = 1;
 
         float limits_ext = 0.1f;
 
         float[][] map_porose = null;
+        float[][] map_porose_data = null;
+        float[][] pores_maxmin = null;
         public void glControl_Render(object sender, GlControlEventArgs e)
         {
             VPs = new Matrix4x4f[4];
@@ -345,7 +347,7 @@ namespace Graphic
             sizeControl = ((Control)sender).Size;
             Gl.Initialize();
             Gl.Enable(EnableCap.Multisample);
-            Gl.ClearColor(0.9f, 0.9f, 0.95f, 0.0f);
+            Gl.ClearColor(0.95f, 0.95f, 0.975f, 0.0f);
             Gl.PointSize(1f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             Gl.Enable(EnableCap.DepthTest);
@@ -393,7 +395,7 @@ namespace Graphic
 
             init_textures_aux_2d();           
             gpuCompute_Aux();
-            gpuCompute_Aux_ret(85.52f, 0.3f);
+            //gpuCompute_Aux_ret(85.52f, 0.3f);
         }
 
         private bool init_textures_aux_2d()
@@ -402,6 +404,7 @@ namespace Graphic
             auxData_2d_out = new TextureGL(0, depth_map, 3, PixelFormat.Rgba);
             porosity_map = new TextureGL(1, qual_map, depth_map, PixelFormat.Rgba);
             auxData = new TextureGL(2, qual_map, qual_map, PixelFormat.Rgba);
+            porosity_data = new TextureGL(3, qual_map, depth_map, PixelFormat.Rgba);
             //Console.WriteLine(toStringBuf(auxData_2d_out.getData(), qual * 4, 4, "aux_2d"));
             return true;
         }
@@ -546,9 +549,9 @@ namespace Graphic
                 Console.WriteLine("map create____________________"+(i+1)+"/"+ qual_comp + " done ");
             }
             // var map_por = auxData.getData();
-
-            map_porose = reshape_map_porose(porosity_map.getData());
-            //Console.WriteLine(toStringBuf(porosity_map.getData(),qual_map * 4, 4, "porosity_map"));
+           
+            map_porose = reshape_map_porose(porosity_map.getData(), porosity_data.getData(),ref map_porose_data, ref pores_maxmin);
+            //Console.WriteLine(toStringBuf(porosity_data.getData(),qual_map * 4, 4, "porosity_map"));
             Console.WriteLine("_______________________");
             //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
         }
@@ -579,26 +582,125 @@ namespace Graphic
                         buffersGl.objs_dynamic = new List<openGlobj>();
                         buffersGl.objs = new List<openGlobj>();
                         addGlobalFrame(100);
-                        addMeshWithoutNorm(map_porose[ind], PrimitiveType.Points);
+                        addMeshWithoutNormColor(map_porose[ind], map_porose_color(map_porose[ind],map_porose_data[ind], pores_maxmin[ind]),PrimitiveType.Points);
                         SortObj();
                         //add_buff_points_id(map_porose[ind],100);
-                        Console.WriteLine("points_add");
+                        //Console.WriteLine("points_add");
                     }
                    
                 }
             }
         }
-        
-        float[][] reshape_map_porose(float[] pores_map, bool normed = true, int strip =4)
+
+        public void set_point_size(float size)
+        {
+            Gl.PointSize(size);
+        }
+        float[] map_porose_color(float[] porose_map_cur, float[] porose_data_cur, float[] max_min_p)
+        {
+            float[] porose_color = new float[porose_map_cur.Length];
+            //Console.WriteLine(porose_map_cur.Length);
+            for(int i = 0; i < porose_color.Length; i+=3)
+            {
+                var color = comp_color(porose_data_cur[i], max_min_p[0], max_min_p[1]);
+                porose_color[i] = color[0];
+                porose_color[i+1] = color[1];
+                porose_color[i+2] = color[2];
+                //Console.WriteLine(max_min_p[0] + " " + max_min_p[1] + " "  + " | " + porose_data_cur[i] + " " + porose_data_cur[i + 1] + " " + porose_data_cur[i + 2] + "  ");
+            }
+
+            return porose_color;
+        }
+        float[] comp_color(float val,float min, float max)
+        {
+
+            var color = new float[3];
+            var z =val;
+            float r = 0.0f;
+            float g = 0.0f;
+            float b = 0.0f;
+            var zs = (max - min) / 2;
+            if (z < zs)
+            {
+                b = 1f - (z - min) / (zs - min);
+                // Console.WriteLine("b = " + b);
+                g = 1f - b;
+            }
+            else
+            {
+                r = (z - zs) / (max - zs);
+                g = 1f - r;
+            }
+            color[0] = r / 1;
+            color[1] = g / 1;
+            color[2] = b / 1;
+            return color;
+        }
+        float[] coloring_mesh(float[] mesh)
+        {
+            var zmin = float.MaxValue;
+            var zmax = float.MinValue;
+            var color = new float[mesh.Length];
+            for (int i = 0; i < mesh.Length; i += 3)
+            {
+                var z = mesh[i + 2];
+                if (z > zmax)
+                {
+                    zmax = z;
+                }
+                if (z < zmin)
+                {
+                    zmin = z;
+                }
+            }
+            var zs = (zmax - zmin) / 2;
+            //Console.WriteLine("zmin = " + zmin + "zmax = " + zmax);
+            for (int i = 0; i < color.Length; i += 3)
+            {
+                var z = mesh[i + 2];
+                float r = 0.0f;
+                float g = 0.0f;
+                float b = 0.0f;
+                if (z < zs)
+                {
+                    b = 1f - (z - zmin) / (zs - zmin);
+                    // Console.WriteLine("b = " + b);
+                    g = 1f - b;
+                }
+                else
+                {
+                    r = (z - zs) / (zmax - zs);
+                    g = 1f - r;
+                }
+                color[i] = r / 1;
+                color[i + 1] = g / 1;
+                color[i + 2] = b / 1;
+
+            }
+            return color;
+        }
+
+        float[][] reshape_map_porose(float[] pores_map, float[] pores_map_data, ref float[][] map_porose_data, ref float[][] maxmin_p,  bool normed = true, int strip =4)
         {
             var map_re = new float[qual_map][];
-            for(int i = 0; i < qual_map; i++)
+            maxmin_p = new float[qual_map][];
+            map_porose_data = new float[qual_map][];
+            for (int i = 0; i < qual_map; i++)
             {
-                int count = (int)pores_map[strip*(qual_map * (depth_map-1)+i)];
+                int count = (int)pores_map[strip * (qual_map * (depth_map - 1) + i)];
+                float min_por = pores_map[strip * (qual_map * (depth_map - 1) + i) + 1];
+                float max_por = pores_map[strip * (qual_map * (depth_map - 1) + i) + 2];
+                
                 if (count>0)
                 {
+                    if(count>depth_map-3)
+                    {
+                        Console.WriteLine("map overflow");
+                    }
                     var sub_point = new float[count * 3];
-                    //Console.WriteLine("____________"+count+"________________");
+                    var sub_point_data = new float[count * 3];
+                   // Console.WriteLine("____________"+count+"________________");
+                    //Console.WriteLine(min_por + " " + max_por + " ");
                     for (int j = 0; j < count; j++)
                     {
                         int ind = strip * (qual_map * (j) + i);
@@ -612,10 +714,15 @@ namespace Graphic
                             sub_point[j * 3 + 1] *= (100 / limits_t_norm.y);
                             sub_point[j * 3 + 2] *= (100 / limits_theta.y);
                         }
-                        //Console.WriteLine(sub_point[j * 3] + " " + sub_point[j * 3+1] + " " + sub_point[j * 3+2]);
-                    }
-                    map_re[i] = sub_point.ToArray();
 
+                        sub_point_data[j * 3] = pores_map_data[ind + 1];
+                        sub_point_data[j * 3 + 1] = pores_map_data[ind + 2];
+                        sub_point_data[j * 3 + 2] = pores_map_data[ind + 3];
+                        //Console.WriteLine(sub_point[j * 3] + " " + sub_point[j * 3+1] + " " + sub_point[j * 3+2]);
+                    }                    
+                    maxmin_p[i] = new float[] { min_por, max_por };
+                    map_re[i] = sub_point.ToArray();
+                    map_porose_data[i] = sub_point_data.ToArray();
                 }
 
             }
@@ -827,17 +934,18 @@ namespace Graphic
         {
             if (buff == null)
                 return name + " null ";
-            string txt = name +" "+buff.Length;
+            StringBuilder txt = new StringBuilder();
+            txt.Append( name +" "+buff.Length);
             for (int i = 0; i < buff.Length / strip; i++)
             {
-                txt += "  | \n";
+                txt.Append("  | \n");
                 for(int j=0; j<strip; j++)
                 {
                     if (j % substrip == 0)
                     {
-                        txt += "  | ";
+                        txt.Append("  | ");
                     }
-                    txt += buff[i * strip+j].ToString() + ", ";
+                    txt.Append(buff[i * strip+j].ToString() + ", ");
                     if(substrip!=0)
                     {
                         
@@ -845,8 +953,8 @@ namespace Graphic
                     
                 }
             }
-            txt += " |\n--------------------------------\n";
-            return txt;
+            txt.Append(" |\n--------------------------------\n");
+            return txt.ToString();
        
         }
         #endregion
@@ -1253,6 +1361,18 @@ namespace Graphic
                 color_buffer_data[i] = r;
                 color_buffer_data[i + 1] = g;
                 color_buffer_data[i + 2] = b;
+
+                normal_buffer_data[i] = 0.1f;
+                normal_buffer_data[i + 1] = 0.1f;
+                normal_buffer_data[i + 2] = 0.1f;
+            }
+            add_buff_gl(gl_vertex_buffer_data, color_buffer_data, normal_buffer_data, primitiveType);
+        }
+        public void addMeshWithoutNormColor(float[] gl_vertex_buffer_data,float[] color_buffer_data, PrimitiveType primitiveType, float r = 0.1f, float g = 0.1f, float b = 0.1f)
+        {
+            var normal_buffer_data = new float[gl_vertex_buffer_data.Length];
+            for (int i = 0; i < color_buffer_data.Length; i += 3)
+            {
 
                 normal_buffer_data[i] = 0.1f;
                 normal_buffer_data[i + 1] = 0.1f;

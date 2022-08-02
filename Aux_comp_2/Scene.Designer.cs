@@ -33,6 +33,7 @@ namespace Aux_gpu
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.label_fps = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.t_box_point_size = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -88,11 +89,21 @@ namespace Aux_gpu
             this.trackBar1.TabIndex = 3;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
+            // t_box_point_size
+            // 
+            this.t_box_point_size.Location = new System.Drawing.Point(1792, 495);
+            this.t_box_point_size.Name = "t_box_point_size";
+            this.t_box_point_size.Size = new System.Drawing.Size(100, 20);
+            this.t_box_point_size.TabIndex = 4;
+            this.t_box_point_size.Text = "1";
+            this.t_box_point_size.DoubleClick += new System.EventHandler(this.t_box_point_size_DoubleClick);
+            // 
             // Scene
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.t_box_point_size);
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.label_fps);
             this.Controls.Add(this.richTextBox1);
@@ -111,6 +122,7 @@ namespace Aux_gpu
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Label label_fps;
         private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.TextBox t_box_point_size;
     }
 }
 

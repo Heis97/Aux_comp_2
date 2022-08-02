@@ -30,8 +30,8 @@ namespace Aux_gpu
 
         public void PreInitializeScene()
         {
-            
-           
+            GL1.addGlobalFrame(100);
+
 
         }
 
@@ -76,6 +76,20 @@ namespace Aux_gpu
         {
             var val = ((TrackBar)sender).Value;
             GL1.show_cur_porose((float)val / 5f);
+        }
+
+        private void t_box_point_size_DoubleClick(object sender, EventArgs e)
+        {
+            try
+            {
+                var val = Convert.ToSingle(((TextBox)sender).Text);
+                GL1.set_point_size(val);
+            }
+            catch
+            {
+
+            }
+            
         }
     }
 }

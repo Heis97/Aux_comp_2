@@ -3,6 +3,7 @@ layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 layout (rgba32f, binding = 0) uniform  image2D aux_data;
 layout (rgba32f, binding = 1) uniform  image2D porosity_map;
 layout (rgba32f, binding = 2) uniform  image2D aux_data_in;
+layout (rgba32f, binding = 3) uniform  image2D porosity_map_data;
 
 uniform vec2 limits_t_norm;
 uniform vec2 limits_theta;
@@ -137,6 +138,7 @@ void main()
 
                     ivec2 ipos_pores = ivec2(porosity_q,ind_d);
                     imageStore(porosity_map, ipos_pores, vec4(h,cur_l,t,theta) );
+                    imageStore(porosity_map_data, ipos_pores, pores_res );
                     ind_d++;
                     imageStore(porosity_map, ipos_pores_ind, vec4(ind_d,pore_size_min,pore_size_max,0) );
                 }  
