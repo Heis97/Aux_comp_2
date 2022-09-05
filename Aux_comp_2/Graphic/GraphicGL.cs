@@ -227,7 +227,7 @@ namespace Graphic
         int qual_comp = 200;
         int qual_map = 200;
         int depth_map = 10000;
-        int type_comp = 1;
+        int type_comp = 0;//0 - 45, 1 - 90
 
         float limits_ext = 0.1f;
 
@@ -467,6 +467,11 @@ namespace Graphic
                 limits_t = new Vertex2f(1f, 1.5f);
                 limits_theta = new Vertex2f(10f, 90f);
             }
+            limits_h = new Vertex2f(5f, 30f);
+            limits_l = new Vertex2f(2f, 20f);
+            limits_t = new Vertex2f(1f, 1.5f);
+            limits_theta = new Vertex2f(10f, 90f);
+            
             limits_h.x *= (1 - limits_ext);         limits_h.y *= (1 + limits_ext);
             limits_l.x *= (1 - limits_ext);         limits_l.y *= (1 + limits_ext);
             limits_t.x *= (1 - limits_ext);         limits_t.y *= (1 + limits_ext);
@@ -530,7 +535,7 @@ namespace Graphic
         {
             initLimits();
 
-            limits_l_norm.x = limits_l.x/ limits_h.x;
+            limits_l_norm.x = limits_l.x / limits_h.x;
             limits_l_norm.y = limits_l.y / limits_h.y;
 
             limits_t_norm.x = limits_t.x / limits_h.x;
@@ -550,8 +555,8 @@ namespace Graphic
             }
             // var map_por = auxData.getData();
            
-            map_porose = reshape_map_porose(porosity_map.getData(), porosity_data.getData(),ref map_porose_data, ref pores_maxmin);
-            //Console.WriteLine(toStringBuf(porosity_data.getData(),qual_map * 4, 4, "porosity_map"));
+            map_porose = reshape_map_porose(porosity_map.getData(), porosity_data.getData(),ref map_porose_data, ref pores_maxmin, false);
+            //Console.WriteLine(toStringBuf(porosity_map.getData(),qual_map * 4, 4, "porosity_map"));
             Console.WriteLine("_______________________");
             //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
         }
@@ -563,14 +568,12 @@ namespace Graphic
             Gl.DispatchCompute(1, 1, 1);
             Gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);
             var ret = auxData_2d_out.getData();
-            Console.WriteLine(ret[0] + " " + ret[1] + " " + ret[2] + " " + ret[3] + " ");
-            //Console.WriteLine(toStringBuf(auxData_2d_out.getData(), depth_map * 4,  4, "porosity_solve"));
+            Console.WriteLine(toStringBuf(ret, depth_map * 4,  4, "porosity_solve"));
             Console.WriteLine("_______________________");
-            //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
         }
 
         public void show_cur_porose(float porose)
-        {
+        {            
             if(map_porose!=null)
             {
                 int ind = (int)((porose*qual_map) / 100f);
@@ -582,20 +585,23 @@ namespace Graphic
                         buffersGl.objs_dynamic = new List<openGlobj>();
                         buffersGl.objs = new List<openGlobj>();
                         addGlobalFrame(100);
+
                         addMeshWithoutNormColor(map_porose[ind], map_porose_color(map_porose[ind],map_porose_data[ind], pores_maxmin[ind]),PrimitiveType.Points);
                         SortObj();
+                        Console.WriteLine(porose);
                         //add_buff_points_id(map_porose[ind],100);
                         //Console.WriteLine("points_add");
-                    }
-                   
+                    }                  
                 }
             }
+            gpuCompute_Aux_ret(porose, 0.7f);
         }
 
         public void set_point_size(float size)
         {
             Gl.PointSize(size);
         }
+
         float[] map_porose_color(float[] porose_map_cur, float[] porose_data_cur, float[] max_min_p)
         {
             float[] porose_color = new float[porose_map_cur.Length];
@@ -608,9 +614,30 @@ namespace Graphic
                 porose_color[i+2] = color[2];
                 //Console.WriteLine(max_min_p[0] + " " + max_min_p[1] + " "  + " | " + porose_data_cur[i] + " " + porose_data_cur[i + 1] + " " + porose_data_cur[i + 2] + "  ");
             }
-
+           // Console.WriteLine(toStringBufs( porose_map_cur, porose_data_cur, 3, 0, "pores_map"));
+            //Console.WriteLine(toStringBuf(porose_data_cur, 3, 0, "porose_data"));
             return porose_color;
         }
+
+        /*float[] get_solvs(float[] porose_map_cur, float[] porose_data_cur, float pore_size,float theta)
+        {
+            for(int i = 0; i < porose_map_cur.Length; i+=3)
+            {
+                var pore_size_c = porose_map_cur[i];
+                var k = pore_size / pore_size_c;
+                var h = k*1;
+                var l = k * porose_data_cur[i];
+                var t = k * porose_data_cur[i+1];
+                var thetta = porose_data_cur[i+2];
+
+            }
+        }
+
+        bool check_solv(float h, float l, float t, float thetta)
+        {
+
+        }*/
+
         float[] comp_color(float val,float min, float max)
         {
 
@@ -941,21 +968,63 @@ namespace Graphic
                 txt.Append("  | \n");
                 for(int j=0; j<strip; j++)
                 {
-                    if (j % substrip == 0)
+                    if (substrip != 0)
                     {
-                        txt.Append("  | ");
+                        if (j % substrip == 0)
+                        {
+                            txt.Append("  | ");
+                        }
                     }
-                    txt.Append(buff[i * strip+j].ToString() + ", ");
-                    if(substrip!=0)
-                    {
-                        
-                    }
+                    txt.Append(buff[i * strip + j].ToString() + ", ");
+                    
                     
                 }
             }
             txt.Append(" |\n--------------------------------\n");
             return txt.ToString();
        
+        }
+
+        string toStringBufs(float[] buff1, float[] buff2, int strip, int substrip, string name)
+        {
+            if (buff1 == null || buff2 == null)
+                return name + " null ";
+            StringBuilder txt = new StringBuilder();
+            txt.Append(name + " " + buff1.Length + " " + buff2.Length);
+            var len_buff = Math.Min(buff1.Length, buff2.Length);
+            for (int i = 0; i < len_buff / strip; i++)
+            {
+                txt.Append("  | \n");
+                for (int j = 0; j < strip; j++)
+                {
+                    if (substrip != 0)
+                    {
+                        if (j % substrip == 0)
+                        {
+                            txt.Append("  | ");
+                        }
+                    }
+                    txt.Append(buff1[i * strip + j].ToString() + ", ");
+
+
+                }
+                for (int j = 0; j < strip; j++)
+                {
+                    if (substrip != 0)
+                    {
+                        if (j % substrip == 0)
+                        {
+                            txt.Append("  | ");
+                        }
+                    }
+                    txt.Append(buff2[i * strip + j].ToString() + ", ");
+
+
+                }
+            }
+            txt.Append(" |\n--------------------------------\n");
+            return txt.ToString();
+
         }
         #endregion
 

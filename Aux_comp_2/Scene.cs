@@ -83,7 +83,8 @@ namespace Aux_gpu
             try
             {
                 var val = Convert.ToSingle(((TextBox)sender).Text);
-                GL1.set_point_size(val);
+                //GL1.set_point_size(val);
+                GL1.show_cur_porose(val);
             }
             catch
             {
