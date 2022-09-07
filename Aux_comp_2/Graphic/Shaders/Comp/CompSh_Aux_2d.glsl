@@ -10,7 +10,7 @@ uniform vec2 limits_theta;
 uniform float cur_l;
 uniform int type_comp;
 
-float filtr_dist = 3;
+float filtr_dist = 0.1;
 uniform ivec4 sizeXY;//map_comp xy, map_poros z, map_por_depth w  
 
 vec4 comp_pores_90(float h,float l ,float t, float theta)

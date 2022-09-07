@@ -225,11 +225,11 @@ namespace Graphic
 
         Vertex4i sizeXY = new Vertex4i(1, 1, 1, 1);
         int qual_comp = 200;
-        int qual_map = 200;
+        int qual_map = 400;
         int depth_map = 10000;
         int type_comp = 0;//0 - 45, 1 - 90
 
-        float limits_ext = 0.1f;
+        float limits_ext = 0.01f;
 
         float[][] map_porose = null;
         float[][] map_porose_data = null;
@@ -458,7 +458,7 @@ namespace Graphic
                 limits_h = new Vertex2f(5f, 10f);
                 limits_l = new Vertex2f(1f, 10f);
                 limits_t = new Vertex2f(2f, 3f);
-                limits_theta = new Vertex2f(10f, 80f);
+                limits_theta = new Vertex2f(10.0f, 90.0f);
             }
             if (type_comp == 1)
             {
@@ -467,10 +467,10 @@ namespace Graphic
                 limits_t = new Vertex2f(1f, 1.5f);
                 limits_theta = new Vertex2f(10f, 90f);
             }
-            limits_h = new Vertex2f(5f, 30f);
+            /*limits_h = new Vertex2f(5f, 30f);
             limits_l = new Vertex2f(2f, 20f);
             limits_t = new Vertex2f(1f, 1.5f);
-            limits_theta = new Vertex2f(10f, 90f);
+            limits_theta = new Vertex2f(10f, 90f);*/
             
             limits_h.x *= (1 - limits_ext);         limits_h.y *= (1 + limits_ext);
             limits_l.x *= (1 - limits_ext);         limits_l.y *= (1 + limits_ext);
@@ -541,7 +541,6 @@ namespace Graphic
             limits_t_norm.x = limits_t.x / limits_h.x;
             limits_t_norm.y = limits_t.y / limits_h.y;
 
-            Console.WriteLine(limits_l.x + " " + limits_t.x);
             sizeXY = new Vertex4i(qual_comp, qual_comp,qual_map,depth_map);
             load_vars_gl(idsAux_comp_map,new openGlobj());
             for (int i =0; i< qual_comp; i++)
@@ -594,7 +593,7 @@ namespace Graphic
                     }                  
                 }
             }
-            gpuCompute_Aux_ret(porose, 0.7f);
+            gpuCompute_Aux_ret(porose, 0.5f);
         }
 
         public void set_point_size(float size)

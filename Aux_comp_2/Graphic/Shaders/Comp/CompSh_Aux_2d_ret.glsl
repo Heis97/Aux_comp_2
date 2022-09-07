@@ -97,7 +97,7 @@ bool check_limits(float h,float l ,float t, float theta)
     {
         if (h-4*t-2*l*cos(radians(theta)) < 2*t)
         {
-        return(false);
+            return(false);
         }
     }
     return(true);
@@ -128,7 +128,7 @@ void main()
 
             vec4 val_n = comp_pores(h,l,t,theta,type_comp);
             //if(check_limits(h,l,t,theta))
-            if(theta>52 && theta<61)
+           // if(check_limits(h,l,t,theta))
             {
                 imageStore(aux_data, ivec2(ind_i,0), ret_n);
                 imageStore(aux_data, ivec2(ind_i,1), val_n);
