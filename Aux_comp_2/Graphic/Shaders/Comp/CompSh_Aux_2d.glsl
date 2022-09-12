@@ -108,7 +108,6 @@ void main()
             float pore_size_min = inf.y;
             float pore_size_max = inf.z;
         
-
             if(ind_d<sizeXY.w-3)
             {           
                 bool comp = false;

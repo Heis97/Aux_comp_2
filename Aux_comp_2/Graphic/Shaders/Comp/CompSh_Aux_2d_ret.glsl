@@ -100,6 +100,14 @@ bool check_limits(float h,float l ,float t, float theta)
             return(false);
         }
     }
+    if(type_comp==0)
+    {
+        float R = 2*h*sin(radians(45))-2*l*cos(radians(theta));
+        if (sin(radians(45))*(R/2-t) < 0.06)
+        {
+            return(false);
+        }
+    }
     return(true);
 }
 
