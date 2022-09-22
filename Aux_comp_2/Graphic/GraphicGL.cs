@@ -224,10 +224,10 @@ namespace Graphic
         Vertex2f limits_t_norm = new Vertex2f(2f, 3f);
 
         Vertex4i sizeXY = new Vertex4i(1, 1, 1, 1);
-        int qual_comp = 200;
+        int qual_comp = 100;
         int qual_map = 400;
         int depth_map = 10000;
-        int type_comp = 0;//0 - 45, 1 - 90
+        int type_comp = 3;//0 - 45, 1 - 90, 2 - triangleб 3 - diamond
 
         float limits_ext = 0.01f;
 
@@ -467,11 +467,25 @@ namespace Graphic
                 limits_t = new Vertex2f(1f, 1.5f);
                 limits_theta = new Vertex2f(10f, 90f);
             }
+            if (type_comp == 2)
+            {
+                limits_h = new Vertex2f(10f, 15f);
+                limits_l = new Vertex2f(35f, 45f);
+                limits_t = new Vertex2f(9f, 11f);
+                limits_theta = new Vertex2f(60f, 80f);
+            }
+            if (type_comp == 3)
+            {
+                limits_h = new Vertex2f(10f, 15f);
+                limits_l = new Vertex2f(35f, 45f);
+                limits_t = new Vertex2f(9f, 11f);
+                limits_theta = new Vertex2f(60f, 80f);
+            }
             /*limits_h = new Vertex2f(5f, 30f);
             limits_l = new Vertex2f(2f, 20f);
             limits_t = new Vertex2f(1f, 1.5f);
             limits_theta = new Vertex2f(10f, 90f);*/
-            
+
             limits_h.x *= (1 - limits_ext);         limits_h.y *= (1 + limits_ext);
             limits_l.x *= (1 - limits_ext);         limits_l.y *= (1 + limits_ext);
             limits_t.x *= (1 - limits_ext);         limits_t.y *= (1 + limits_ext);
@@ -554,10 +568,11 @@ namespace Graphic
             }
             // var map_por = auxData.getData();
            
-            map_porose = reshape_map_porose(porosity_map.getData(), porosity_data.getData(),ref map_porose_data, ref pores_maxmin, false);
-            //Console.WriteLine(toStringBuf(porosity_map.getData(),qual_map * 4, 4, "porosity_map"));
+            map_porose = reshape_map_porose(porosity_map.getData(), porosity_data.getData(), ref map_porose_data, ref pores_maxmin, false);
+            Console.WriteLine(toStringBuf(porosity_map.getData(),qual_map * 4, 4, "porosity_map"));
+            //Console.WriteLine("_______________________");
+           // Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
             Console.WriteLine("_______________________");
-            //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
         }
 
         void gpuCompute_Aux_ret(float porosity = 1, float pore_size = 1)
@@ -567,6 +582,7 @@ namespace Graphic
             Gl.DispatchCompute(1, 1, 1);
             Gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);
             var ret = auxData_2d_out.getData();
+          
             Console.WriteLine(toStringBuf(ret, depth_map * 4,  4, "porosity_solve"));
             Console.WriteLine("_______________________");
         }
@@ -593,7 +609,7 @@ namespace Graphic
                     }                  
                 }
             }
-            gpuCompute_Aux_ret(porose, 0.5f);
+            gpuCompute_Aux_ret(porose, 2.1f);
         }
 
         public void set_point_size(float size)

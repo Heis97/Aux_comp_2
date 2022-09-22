@@ -59,6 +59,31 @@ vec4 comp_pores_45(float h,float l ,float t, float theta)
 
 }
 
+vec4 comp_pores_triangles(float h,float l ,float t, float theta)
+{
+    float pore_size = 2 * l * tan(radians(theta / 2)) * cos(radians(theta)) - t; 
+    // Пористость
+    float porosity = 100 * pow( (1 - t / (2 * l * tan(radians(theta/2)) * cos(radians(theta)))), 2); 
+   
+    return(vec4 (porosity, pore_size, 0.1, 0.1));
+}
+vec4 comp_pores_diamond(float h1,float l ,float t, float theta)
+{
+    float h = t / sin(radians(theta)) + (l * sin(radians(theta)) - t / 2) / tan(radians(theta));
+
+    // Площадь пор
+    float scuare_pore = l * l * sin(radians(2 * theta)) / 2;
+
+    // Площадь всей ячейки
+    float scuare_cell = (t + l * sin(radians(theta))) * h;
+    // Пористость
+    float porosity = 100 * scuare_pore / scuare_cell;
+    // Размер пор
+    float pore_size = l * sin(radians(2 * theta));
+
+    return(vec4 (porosity, pore_size, 0.1, 0.1));
+}
+
 bool filter_solv(int por_ind, int len, vec4 val)
 {   
     for(int i=0; i<len; i++)
@@ -85,6 +110,14 @@ vec4 comp_pores(float h,float l ,float t, float theta,int type)
     else if(type==1)
     {
         return (comp_pores_90(h,l,t,theta));
+    }
+    else if(type==2)
+    {
+        return (comp_pores_triangles(h,l,t,theta));
+    }
+    else if(type==3)
+    {
+        return (comp_pores_diamond(h,l,t,theta));
     }
 }
 
@@ -139,7 +172,7 @@ void main()
                     imageStore(porosity_map, ipos_pores, vec4(h,cur_l,t,theta) );
                     imageStore(porosity_map_data, ipos_pores, pores_res );
                     ind_d++;
-                    imageStore(porosity_map, ipos_pores_ind, vec4(ind_d,pore_size_min,pore_size_max,0) );
+                    imageStore(porosity_map, ipos_pores_ind, vec4(ind_d,pore_size_min,pore_size_max,porosity_q) );
                 }  
                 imageStore(aux_data_in, ivec2(porosity_q,ind_d), pores_res);
             }  

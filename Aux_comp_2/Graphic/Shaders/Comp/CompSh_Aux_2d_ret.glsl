@@ -27,10 +27,9 @@ vec4 comp_pores_90(float h,float l ,float t, float theta)
     float pore_size_B_B = -2 * t + width_cell / 2;
     float pore_size_A_A = h - 2 * l * cos(radians(theta)) - 4 * t;
 
+
     //Пористость
     float porosity = (1 - unit_cell_volume / general_volume) * 100;
-   
-
     return (vec4 ( porosity, pore_size_A_A * 0.1, pore_size_B_B * 0.1,0));
 
 }
@@ -63,6 +62,33 @@ vec4 comp_pores_45(float h,float l ,float t, float theta)
     return (vec4 ( porosity, pore_size_A_A * 0.1, pore_size_B_B * 0.1,0));
 
 }
+
+vec4 comp_pores_triangles(float h,float l ,float t, float theta)
+{
+    float pore_size = 2 * l * tan(radians(theta / 2)) * cos(radians(theta)) - t; 
+    // Пористость
+    float porosity = 100 * pow( (1 - t / (2 * l * tan(radians(theta/2)) * cos(radians(theta)))), 2); 
+   
+    return(vec4 (porosity, pore_size, 0.1, 0.1));
+}
+
+vec4 comp_pores_diamond(float h1,float l ,float t, float theta)
+{
+    float h = t / sin(radians(theta)) + (l * sin(radians(theta)) - t / 2) / tan(radians(theta));
+
+    // Площадь пор
+    float scuare_pore = l * l * sin(radians(2 * theta)) / 2;
+
+    // Площадь всей ячейки
+    float scuare_cell = (t + l * sin(radians(theta))) * h;
+    // Пористость
+    float porosity = 100 *  scuare_pore / scuare_cell;
+    // Размер пор
+    float pore_size =l * sin(radians(2 * theta));
+
+    return(vec4 (porosity, pore_size, 0.1, 0.1));
+}
+
 vec4 comp_pores(float h,float l ,float t, float theta, int type)
 {
     if(type==0)
@@ -72,6 +98,14 @@ vec4 comp_pores(float h,float l ,float t, float theta, int type)
     else if(type==1)
     {
         return (comp_pores_90(h,l,t,theta));
+    }
+    else if(type==2)
+    {
+        return (comp_pores_triangles(h,l,t,theta));
+    }
+    else if(type==3)
+    {
+        return (comp_pores_diamond(h,l,t,theta));
     }
 }
 
@@ -103,7 +137,7 @@ bool check_limits(float h,float l ,float t, float theta)
     if(type_comp==0)
     {
         float R = 2*h*sin(radians(45))-2*l*cos(radians(theta));
-        if (sin(radians(45))*(R/2-t) < 0.06)
+        if (sqrt(2)*(R/2-t) < 0.06)
         {
             return(false);
         }
@@ -136,7 +170,7 @@ void main()
 
             vec4 val_n = comp_pores(h,l,t,theta,type_comp);
             //if(check_limits(h,l,t,theta))
-           // if(check_limits(h,l,t,theta))
+            if(check_limits(h,l,t,theta))
             {
                 imageStore(aux_data, ivec2(ind_i,0), ret_n);
                 imageStore(aux_data, ivec2(ind_i,1), val_n);
