@@ -571,7 +571,7 @@ namespace Graphic
             map_porose = reshape_map_porose(porosity_map.getData(), porosity_data.getData(), ref map_porose_data, ref pores_maxmin, false);
             Console.WriteLine(toStringBuf(porosity_map.getData(),qual_map * 4, 4, "porosity_map"));
             //Console.WriteLine("_______________________");
-           // Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
+            //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
             Console.WriteLine("_______________________");
         }
 
@@ -587,7 +587,7 @@ namespace Graphic
             Console.WriteLine("_______________________");
         }
 
-        public void show_cur_porose(float porose)
+        public void show_cur_porose(float porose, float pore_size)
         {            
             if(map_porose!=null)
             {
@@ -609,7 +609,7 @@ namespace Graphic
                     }                  
                 }
             }
-            gpuCompute_Aux_ret(porose, 2.1f);
+            gpuCompute_Aux_ret(porose, pore_size);
         }
 
         public void set_point_size(float size)

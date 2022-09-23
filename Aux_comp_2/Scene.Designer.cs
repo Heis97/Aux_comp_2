@@ -33,7 +33,11 @@ namespace Aux_gpu
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.label_fps = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
-            this.t_box_point_size = new System.Windows.Forms.TextBox();
+            this.t_box_porose = new System.Windows.Forms.TextBox();
+            this.t_box_pore_size = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.but_comp = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -89,21 +93,60 @@ namespace Aux_gpu
             this.trackBar1.TabIndex = 3;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
-            // t_box_point_size
+            // t_box_porose
             // 
-            this.t_box_point_size.Location = new System.Drawing.Point(1792, 495);
-            this.t_box_point_size.Name = "t_box_point_size";
-            this.t_box_point_size.Size = new System.Drawing.Size(100, 20);
-            this.t_box_point_size.TabIndex = 4;
-            this.t_box_point_size.Text = "1";
-            this.t_box_point_size.DoubleClick += new System.EventHandler(this.t_box_point_size_DoubleClick);
+            this.t_box_porose.Location = new System.Drawing.Point(1792, 495);
+            this.t_box_porose.Name = "t_box_porose";
+            this.t_box_porose.Size = new System.Drawing.Size(100, 20);
+            this.t_box_porose.TabIndex = 4;
+            this.t_box_porose.Text = "1";
+            // 
+            // t_box_pore_size
+            // 
+            this.t_box_pore_size.Location = new System.Drawing.Point(1792, 521);
+            this.t_box_pore_size.Name = "t_box_pore_size";
+            this.t_box_pore_size.Size = new System.Drawing.Size(100, 20);
+            this.t_box_pore_size.TabIndex = 5;
+            this.t_box_pore_size.Text = "1";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(1705, 498);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(81, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Пористость, %";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(1697, 524);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(89, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Размер пор, мм";
+            // 
+            // but_comp
+            // 
+            this.but_comp.Location = new System.Drawing.Point(1792, 547);
+            this.but_comp.Name = "but_comp";
+            this.but_comp.Size = new System.Drawing.Size(100, 30);
+            this.but_comp.TabIndex = 8;
+            this.but_comp.Text = "Расчёт";
+            this.but_comp.UseVisualStyleBackColor = true;
+            this.but_comp.Click += new System.EventHandler(this.but_comp_Click);
             // 
             // Scene
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
-            this.Controls.Add(this.t_box_point_size);
+            this.Controls.Add(this.but_comp);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.t_box_pore_size);
+            this.Controls.Add(this.t_box_porose);
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.label_fps);
             this.Controls.Add(this.richTextBox1);
@@ -122,7 +165,11 @@ namespace Aux_gpu
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Label label_fps;
         private System.Windows.Forms.TrackBar trackBar1;
-        private System.Windows.Forms.TextBox t_box_point_size;
+        private System.Windows.Forms.TextBox t_box_porose;
+        private System.Windows.Forms.TextBox t_box_pore_size;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button but_comp;
     }
 }
 

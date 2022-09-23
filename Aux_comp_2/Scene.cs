@@ -31,10 +31,7 @@ namespace Aux_gpu
         public void PreInitializeScene()
         {
             GL1.addGlobalFrame(100);
-
-
         }
-
         
         #region gl_control
 
@@ -75,22 +72,21 @@ namespace Aux_gpu
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
             var val = ((TrackBar)sender).Value;
-            GL1.show_cur_porose((float)val / 5f);
+            var pore_size = Convert.ToSingle(t_box_pore_size.Text);
+            GL1.show_cur_porose((float)val / 5f,pore_size);
         }
 
-        private void t_box_point_size_DoubleClick(object sender, EventArgs e)
+        private void but_comp_Click(object sender, EventArgs e)
         {
             try
             {
-                var val = Convert.ToSingle(((TextBox)sender).Text);
-                //GL1.set_point_size(val);
-                GL1.show_cur_porose(val);
+                var porose = Convert.ToSingle(t_box_porose.Text);
+                var pore_size = Convert.ToSingle(t_box_pore_size.Text);
+                GL1.show_cur_porose(porose, pore_size);
             }
             catch
             {
-
             }
-            
         }
     }
 }
