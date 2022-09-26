@@ -227,7 +227,7 @@ namespace Graphic
         int qual_comp = 100;
         int qual_map = 400;
         int depth_map = 10000;
-        int type_comp = 3;//0 - 45, 1 - 90, 2 - triangleб 3 - diamond
+        int type_comp = 4;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass
 
         float limits_ext = 0.01f;
 
@@ -480,6 +480,13 @@ namespace Graphic
                 limits_l = new Vertex2f(35f, 45f);
                 limits_t = new Vertex2f(9f, 11f);
                 limits_theta = new Vertex2f(60f, 80f);
+            }
+            if (type_comp == 4)
+            {
+                limits_h = new Vertex2f(40f, 44f);
+                limits_l = new Vertex2f(9f, 11f);
+                limits_t = new Vertex2f(7f, 9f);
+                limits_theta = new Vertex2f(58f, 62f);
             }
             /*limits_h = new Vertex2f(5f, 30f);
             limits_l = new Vertex2f(2f, 20f);
