@@ -12,7 +12,7 @@ uniform float cur_l;
 uniform float porosity_inp;
 uniform float pore_size_inp;
 
-uniform int type_comp;
+uniform int type_comp;//hjt
 
 uniform ivec4 sizeXY;//map_comp xy, map_poros z, map_por_depth w 
 
