@@ -85,7 +85,21 @@ vec4 comp_pores_diamond(float h1,float l ,float t, float theta)
     return(vec4 (porosity, pore_size, 0.1, h));
 }
 
-vec4 comp_pores_hourglass_honeycomb(float h,float l ,float t, float theta)
+vec4 comp_pores_hourglass(float h,float l ,float t, float theta)
+{
+    float g = l * cos(radians(theta)) + t / sin(radians(theta)) + t /(2 * tan(radians(theta)));
+    // Пористость
+
+    float porosity = l * sin(radians(theta)) * (h +l * cos(radians(theta)) - 2 * g) /  (h - g) / (l * sin(radians(theta)) + t / 2);
+    
+    // Размер пор
+   // float pore_size  = (h - 2 * (l * cos(radians(theta)) + t / sin(radians(theta)) + t / (2 * tan(radians(theta))))) ;
+
+   float pore_size = h - 2 * (l * cos(radians(theta)) + t / sin(radians(theta)) + t /(2 * tan(radians(theta))));
+
+    return(vec4 (100*porosity, pore_size*0.1, g, 0.1));
+}
+vec4 comp_pores_honeycomb(float h,float l ,float t, float theta)
 {
     float g = l * cos(radians(theta)) + t / sin(radians(theta)) + t /(2 * tan(radians(theta)));
     // Пористость
@@ -136,7 +150,11 @@ vec4 comp_pores(float h,float l ,float t, float theta,int type)
     }
     else if(type==4)
     {
-        return (comp_pores_hourglass_honeycomb(h,l,t,theta));
+        return (comp_pores_hourglass(h,l,t,theta));
+    }
+    else if(type==5)
+    {
+        return (comp_pores_honeycomb(h,l,t,theta));
     }
 }
 

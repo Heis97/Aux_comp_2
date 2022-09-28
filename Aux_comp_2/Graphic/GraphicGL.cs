@@ -227,7 +227,7 @@ namespace Graphic
         int qual_comp = 100;
         int qual_map = 400;
         int depth_map = 10000;
-        int type_comp = 4;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass
+        int type_comp = 2;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass, 5 - honeycomb
 
         float limits_ext = 0.01f;
 
@@ -476,17 +476,24 @@ namespace Graphic
             }
             if (type_comp == 3)
             {
-                limits_h = new Vertex2f(10f, 15f);
-                limits_l = new Vertex2f(35f, 45f);
-                limits_t = new Vertex2f(9f, 11f);
+                limits_h = new Vertex2f(34f, 48f);
+                limits_l = new Vertex2f(5f, 10f);
+                limits_t = new Vertex2f(8f, 12f);
                 limits_theta = new Vertex2f(60f, 80f);
             }
             if (type_comp == 4)
             {
-                limits_h = new Vertex2f(40f, 44f);
-                limits_l = new Vertex2f(9f, 11f);
-                limits_t = new Vertex2f(7f, 9f);
-                limits_theta = new Vertex2f(58f, 62f);
+                limits_h = new Vertex2f(30f, 54f);
+                limits_l = new Vertex2f(5f, 10f);
+                limits_t = new Vertex2f(8f, 12f);
+                limits_theta = new Vertex2f(10f, 90f);
+            }
+            if (type_comp == 5)
+            {
+                limits_h = new Vertex2f(36f, 48f);
+                limits_l = new Vertex2f(8f, 14f);
+                limits_t = new Vertex2f(8f, 12f);
+                limits_theta = new Vertex2f(100f, 130f);
             }
             /*limits_h = new Vertex2f(5f, 30f);
             limits_l = new Vertex2f(2f, 20f);
@@ -998,14 +1005,15 @@ namespace Graphic
                         }
                     }
                     txt.Append(buff[i * strip + j].ToString() + ", ");
-                    
-                    
+                                        
                 }
             }
             txt.Append(" |\n--------------------------------\n");
             return txt.ToString();
        
         }
+
+
 
         string toStringBufs(float[] buff1, float[] buff2, int strip, int substrip, string name)
         {
