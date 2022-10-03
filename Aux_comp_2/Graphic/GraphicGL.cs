@@ -227,7 +227,7 @@ namespace Graphic
         int qual_comp = 100;
         int qual_map = 400;
         int depth_map = 10000;
-        int type_comp = 2;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass, 5 - honeycomb
+        int type_comp = 4;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass, 5 - honeycomb
 
         float limits_ext = 0.01f;
 
@@ -467,33 +467,33 @@ namespace Graphic
                 limits_t = new Vertex2f(1f, 1.5f);
                 limits_theta = new Vertex2f(10f, 90f);
             }
-            if (type_comp == 2)
+            if (type_comp == 2) // triangle 
             {
-                limits_h = new Vertex2f(10f, 15f);
-                limits_l = new Vertex2f(35f, 45f);
-                limits_t = new Vertex2f(9f, 11f);
-                limits_theta = new Vertex2f(60f, 80f);
+                //limits_h = new Vertex2f(10f, 15f); // не учитывается
+                limits_l = new Vertex2f(26f, 27f);
+                limits_t = new Vertex2f(8f, 9f); // одинаковый диапазон для всех моделей - (*)
+                limits_theta = new Vertex2f(49f, 51f);
             }
-            if (type_comp == 3)
+            if (type_comp == 3) // diamond
             {
-                limits_h = new Vertex2f(34f, 48f);
-                limits_l = new Vertex2f(5f, 10f);
-                limits_t = new Vertex2f(8f, 12f);
-                limits_theta = new Vertex2f(60f, 80f);
+                //limits_h = new Vertex2f(34f, 48f); // не учитывается
+                limits_l = new Vertex2f(25f, 50f);
+                limits_t = new Vertex2f(8f, 15f); // (*)
+                limits_theta = new Vertex2f(10f, 80f);
             }
-            if (type_comp == 4)
+            if (type_comp == 4) // hourglass
             {
                 limits_h = new Vertex2f(30f, 54f);
                 limits_l = new Vertex2f(5f, 10f);
-                limits_t = new Vertex2f(8f, 12f);
-                limits_theta = new Vertex2f(10f, 90f);
+                limits_t = new Vertex2f(8f, 15f); // (*)
+                limits_theta = new Vertex2f(10f, 80f);
             }
-            if (type_comp == 5)
+            if (type_comp == 5) // honeycomb
             {
                 limits_h = new Vertex2f(36f, 48f);
                 limits_l = new Vertex2f(8f, 14f);
-                limits_t = new Vertex2f(8f, 12f);
-                limits_theta = new Vertex2f(100f, 130f);
+                limits_t = new Vertex2f(8f, 15f); // (*)
+                limits_theta = new Vertex2f(100f, 170f);
             }
             /*limits_h = new Vertex2f(5f, 30f);
             limits_l = new Vertex2f(2f, 20f);
@@ -1479,6 +1479,8 @@ namespace Graphic
             }
             add_buff_gl(gl_vertex_buffer_data, color_buffer_data, normal_buffer_data, primitiveType);
         }
+
+
         void addMeshColor(float[] gl_vertex_buffer_data, float[] gl_color_buffer_data, PrimitiveType primitiveType, float r = 0.1f, float g = 0.1f, float b = 0.1f)
         {
             var normal_buffer_data = new float[gl_vertex_buffer_data.Length];

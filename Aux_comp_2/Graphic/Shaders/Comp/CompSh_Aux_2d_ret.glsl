@@ -218,7 +218,7 @@ void main()
             vec4 ret_n = vec4(h,l,t,theta);
 
             vec4 val_n = comp_pores(h,l,t,theta,type_comp);
-            //if(check_limits(h,l,t,theta))// проверка, можно убирать
+            if(check_limits(h,l,t,theta))// проверка, можно убирать
             {
                 imageStore(aux_data, ivec2(ind_i,0), ret_n);
                 imageStore(aux_data, ivec2(ind_i,1), val_n);

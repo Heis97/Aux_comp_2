@@ -158,6 +158,13 @@ vec4 comp_pores(float h,float l ,float t, float theta,int type)
     }
 }
 
+bool porosity_lim(float porosity_q, float porosity_min, float porosity_max)
+{
+     float d_sc = sizeXY.z/100;
+    return porosity_q/d_sc >= porosity_min && porosity_q/d_sc <= porosity_max;
+}
+
+
 void main() 
 {
     ivec2 ipos = ivec2(gl_GlobalInvocationID.x,gl_GlobalInvocationID.y);
@@ -172,9 +179,11 @@ void main()
     }
     
     int porosity_q = int(float(sizeXY.z*pores_res.x)/100);
-    if (porosity_q >= 0 && porosity_q <= sizeXY.z-1)
+   
+    //if (porosity_q >= 0 && porosity_q <= sizeXY.z-1)
+    if (porosity_lim(porosity_q,30,60) && porosity_q <= sizeXY.z-1)
     {
-        if(pores_res.x>0 && pores_res.y>0 && pores_res.z>0)
+        if( pores_res.x>0 && pores_res.y>0 && pores_res.z>0)
         {
             ivec2 ipos_pores_ind = ivec2(porosity_q,sizeXY.w-1);
             vec3 inf = imageLoad(porosity_map, ipos_pores_ind).xyz;
@@ -214,7 +223,8 @@ void main()
                     imageStore(porosity_map, ipos_pores, vec4(h,cur_l,t,theta) );
                     imageStore(porosity_map_data, ipos_pores, pores_res );
                     ind_d++;
-                    imageStore(porosity_map, ipos_pores_ind, vec4(ind_d,pore_size_min,pore_size_max,pores_res.x) );
+                    imageStore(porosity_map, ipos_pores_ind, vec4(t ,pore_size_min,pore_size_max,pores_res.x) );
+                    //imageStore(porosity_map, ipos_pores_ind, vec4(ind_d,pore_size_min,t,pores_res.x) ); // вывод значений
                 }  
                 imageStore(aux_data_in, ivec2(porosity_q,ind_d), pores_res);
             }  
