@@ -119,7 +119,7 @@ namespace Graphic
         public int LightPowerID;
         public int MaterialDiffuseID;
         public int MaterialAmbientID;
-        public int currentMonitor = 1;
+        public int currentMonitor = 0;
         public int MaterialSpecularID;
         public int TextureID;
         public int MouseLocID;
@@ -135,6 +135,7 @@ namespace Graphic
         public int limits_t_ID;
         public int limits_theta_ID;
         public int cur_l_ID;
+        public int cur_t_ID;
         public int sizeXY_ID;
 
         public int limits_l_norm_ID;
@@ -157,11 +158,11 @@ namespace Graphic
         public int saveImagesLen = 0;
         public int renderdelim = 5;
         public int rendercout = 0;
-        public viewType typeProj = viewType.Perspective;
+        public viewType typeProj = viewType.Ortho;
         Size sizeControl;
         Point lastPos;
 
-        int currentMonitor = 1;
+        int currentMonitor = 0;
         public int textureVis = 0;
         float LightPower = 1.0f;
         public BuffersGl buffersGl = new BuffersGl();
@@ -186,13 +187,7 @@ namespace Graphic
         public Size size = new Size(1,1);
         Size textureSize;
         public Bitmap bmp;
-
-
-
-
-        TextureGL posTimeData, chooseData, objData,auxData_2d_in;
-
-        
+  
         public ObjectMassGL[] dataComputeShader = new ObjectMassGL[0];
         public ObjectAuxGL[] dataComputeShaderAux = new ObjectAuxGL[0];
         bool initComputeShader = false;
@@ -210,7 +205,7 @@ namespace Graphic
 
         IDs idsAux_comp_map = new IDs();
         IDs idsAux_ret = new IDs();
-
+        IDs idsAux_comp_map_one_t = new IDs();
 
         TextureGL auxData_2d_out, porosity_map, auxData,porosity_data;
         Vertex2f limits_h = new Vertex2f(5f, 10f);
@@ -388,14 +383,21 @@ namespace Graphic
             idsAux_comp_map.programID = createShaderCompute(assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d.glsl" }));
             init_vars_gl(idsAux_comp_map);
 
+            idsAux_comp_map_one_t.programID = createShaderCompute(assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d_one_t.glsl" }));
+            init_vars_gl(idsAux_comp_map_one_t);
+
             idsAux_ret.programID = createShaderCompute(assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d_ret.glsl" }));
             init_vars_gl(idsAux_ret);
 
             #endregion
 
-            init_textures_aux_2d();           
-            gpuCompute_Aux();
+            init_textures_aux_2d();
+
+
+            //gpuCompute_Aux();            
             //gpuCompute_Aux_ret(85.52f, 0.3f);
+
+            show_area_ppt(8f, 15f, 3, 10);
         }
 
         private bool init_textures_aux_2d()
@@ -418,6 +420,7 @@ namespace Graphic
             ids.limits_t_ID = Gl.GetUniformLocation(ids.programID, "limits_t");
             ids.limits_theta_ID = Gl.GetUniformLocation(ids.programID, "limits_theta");
             ids.cur_l_ID = Gl.GetUniformLocation(ids.programID, "cur_l");
+            ids.cur_t_ID = Gl.GetUniformLocation(ids.programID, "cur_t");
             ids.sizeXY_ID = Gl.GetUniformLocation(ids.programID, "sizeXY");
 
             ids.limits_l_norm_ID = Gl.GetUniformLocation(ids.programID, "limits_l_norm");
@@ -518,6 +521,7 @@ namespace Graphic
             Gl.Uniform4i(ids.sizeXY_ID, 1, sizeXY);
             Gl.Uniform1f(ids.cur_l_ID, 1, 1f);
 
+
             Gl.Uniform2f(ids.limits_l_norm_ID, 1, limits_l_norm);
             Gl.Uniform2f(ids.limits_t_norm_ID, 1, limits_t_norm);
 
@@ -555,9 +559,34 @@ namespace Graphic
            // Gl.Uniform1i(ids.lightVisID, 1, lightVis);
         }
 
-        private void load_vars_intern_gl(IDs ids,float cur_l)
+        private void load_vars_intern_gl(IDs ids,float cur_l, float cur_t=1f)
         {
             Gl.Uniform1f(ids.cur_l_ID, 1, cur_l);
+            Gl.Uniform1f(ids.cur_t_ID, 1, cur_t);
+        }
+
+        void gpuCompute_Aux_one_t(float t)
+        {
+            initLimits();
+            sizeXY = new Vertex4i(qual_comp, qual_comp, qual_map, depth_map);
+            load_vars_gl(idsAux_comp_map_one_t, new openGlobj());
+            load_vars_intern_gl(idsAux_comp_map_one_t, 1,t);
+            for (int i = 0; i < qual_comp; i++)
+            {
+                float l = limits_l.x + (limits_l.y - limits_l.x) * (float)i / (float)qual_comp;
+                load_vars_intern_gl(idsAux_comp_map_one_t, l);
+                Gl.DispatchCompute((uint)sizeXY.x, (uint)sizeXY.x, 1);
+                Gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);
+                // Console.WriteLine(toStringBuf(auxData.getData(), qual_map * 4, 4, "porosity_map"));
+                Console.WriteLine("map create____________________" + (i + 1) + "/" + qual_comp + " done ");
+            }
+            // var map_por = auxData.getData();
+
+            map_porose = reshape_map_porose(porosity_map.getData(), porosity_data.getData(), ref map_porose_data, ref pores_maxmin, false);
+            //Console.WriteLine(toStringBuf(porosity_map.getData(), qual_map * 4, 4, "porosity_map"));
+            //Console.WriteLine("_______________________");
+            //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
+            Console.WriteLine("_______________________");
         }
         void gpuCompute_Aux()
         {
@@ -625,6 +654,26 @@ namespace Graphic
             }
             gpuCompute_Aux_ret(porose, pore_size);
         }
+        public void show_area_ppt(float t_min, float t_max,int type,int qual)
+        {
+
+            for(int i = 0; i < qual; i++)
+            {
+                var t  = t_min + i*(t_max - t_min)/qual;
+                show_cur_area(type, t);
+            }
+            SortObj();
+        }
+        public void show_cur_area(int type,float t)
+        {
+            type_comp = type;
+            gpuCompute_Aux_one_t(t);
+            var area = map_porose_area(pores_maxmin, t);
+            addMeshWithoutNorm(area, PrimitiveType.Points);
+            
+        }
+
+
 
         public void set_point_size(float size)
         {
@@ -646,6 +695,29 @@ namespace Graphic
            // Console.WriteLine(toStringBufs( porose_map_cur, porose_data_cur, 3, 0, "pores_map"));
             //Console.WriteLine(toStringBuf(porose_data_cur, 3, 0, "porose_data"));
             return porose_color;
+        }
+
+        float[] map_porose_area(float[][] max_min_p,float t)
+        {
+            float[] porose_area = new float[max_min_p.Length*6];
+            for (int i = 0; i < max_min_p.Length; i++)
+            {
+                if(max_min_p[i]!=null)
+                {
+                    porose_area[i * 6] = max_min_p[i][0];
+                    porose_area[i * 6 + 1] = i;
+                    porose_area[i * 6 + 2] =  t;
+
+                    porose_area[i * 6 + 3] = max_min_p[i][1];
+                    porose_area[i * 6 + 4] = i;
+                    porose_area[i * 6 + 5] =  t;
+                }
+                
+                //Console.WriteLine(max_min_p[0] + " " + max_min_p[1] + " "  + " | " + porose_data_cur[i] + " " + porose_data_cur[i + 1] + " " + porose_data_cur[i + 2] + "  ");
+            }
+            // Console.WriteLine(toStringBufs( porose_map_cur, porose_data_cur, 3, 0, "pores_map"));
+            //Console.WriteLine(toStringBuf(porose_data_cur, 3, 0, "porose_data"));
+            return porose_area;
         }
 
         /*float[] get_solvs(float[] porose_map_cur, float[] porose_data_cur, float pore_size,float theta)

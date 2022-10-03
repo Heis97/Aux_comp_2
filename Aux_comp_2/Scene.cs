@@ -88,5 +88,10 @@ namespace Aux_gpu
             {
             }
         }
+
+        private void but_planeXY_Click(object sender, EventArgs e)
+        {
+            GL1.planeXY();
+        }
     }
 }

@@ -180,8 +180,8 @@ void main()
     
     int porosity_q = int(float(sizeXY.z*pores_res.x)/100);
    
-    //if (porosity_q >= 0 && porosity_q <= sizeXY.z-1)
-    if (porosity_lim(porosity_q,30,60) && porosity_q <= sizeXY.z-1)
+    if (porosity_q >= 0 && porosity_q <= sizeXY.z-1)
+    //if (porosity_lim(porosity_q,30,60) && porosity_q <= sizeXY.z-1)
     {
         if( pores_res.x>0 && pores_res.y>0 && pores_res.z>0)
         {
