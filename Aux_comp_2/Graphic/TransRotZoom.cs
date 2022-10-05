@@ -71,7 +71,7 @@ namespace Graphic
             rect = _rect;
             id = _id;
             type = TRZtype.Master;
-            viewType_ = viewType.Perspective;
+            viewType_ = viewType.Ortho;
             visible = false;
             target = new Vertex3f(0, 0, -10);
             pos = new Vertex3f(0, 0, 10f);
@@ -287,8 +287,9 @@ namespace Graphic
             }
             else if (viewType_ == viewType.Ortho)
             {
-                var _Pm = Matrix4x4f.Ortho(-1, 1, -1, 1, 0.00001f, 10000f);
-                var _Vm = Matrix4x4f.Translated(pos.x, -pos.y, (float)zoom * pos.z) *
+                var asp = (float)rect.Width / rect.Height;
+                var _Pm = Matrix4x4f.Ortho(-asp*(float)zoom*10, asp * (float)zoom * 10, -(float)zoom * 10, (float)zoom * 10, -10000f, 10000f);
+                var _Vm = Matrix4x4f.Translated(target.x, -target.y, -(float)zoom) *
                     Matrix4x4f.RotatedX((float)xRot) *
                     Matrix4x4f.RotatedY((float)yRot) *
                     Matrix4x4f.RotatedZ((float)zRot);
