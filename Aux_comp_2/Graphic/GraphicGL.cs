@@ -219,6 +219,7 @@ namespace Graphic
         IDs idsAux_comp_map = new IDs();
         IDs idsAux_ret = new IDs();
         IDs idsAux_comp_map_one_t = new IDs();
+        IDs idsAux_comp_map_def = new IDs();
 
         TextureGL auxData_2d_out, porosity_map, auxData,porosity_data;
         Vertex2f limits_h = new Vertex2f(5f, 10f);
@@ -235,7 +236,7 @@ namespace Graphic
         int qual_comp = 100;//100
         int qual_map = 400;//400
         int depth_map = 10000;//10000
-        int type_comp = 4;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass, 5 - honeycomb
+        int type_comp = 5;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass, 5 - honeycomb
 
         float limits_ext = 0.01f;
 
@@ -402,18 +403,22 @@ namespace Graphic
             idsAux_ret.programID = createShaderCompute(assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d_ret.glsl" }));
             init_vars_gl(idsAux_ret);
 
+            idsAux_comp_map_def.programID = createShaderCompute(assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d_def.glsl" }));
+            init_vars_gl(idsAux_comp_map_def);
+
             #endregion
 
             init_textures_aux_2d();
 
 
-            //gpuCompute_Aux();            
+            // gpuCompute_Aux();            
             //gpuCompute_Aux_ret(85.52f, 0.3f);
-            for(int i =0; i < 5; i++)
-            {
-                show_area_ppt(i, 10);
-            }
-            //show_area_ppt(3, 10);
+           /* for(int i =2; i < 5; i++)
+             {
+                 show_area_ppt(i, 10);
+             }*/
+            //show_area_ppt(type_comp, 1);
+            gpuCompute_Aux_def();
         }
 
         private bool init_textures_aux_2d()
@@ -470,7 +475,7 @@ namespace Graphic
             ids.targetCamID = Gl.GetUniformLocation(ids.programID, "targetCam");
             ids.targetCamIndID = Gl.GetUniformLocation(ids.programID, "targetCamInd");
         }
-        void initLimits()
+        void initLimits() // лимиты 
         {
             if (type_comp == 0)
             {
@@ -489,28 +494,28 @@ namespace Graphic
             if (type_comp == 2) // triangle 
             {
                 //limits_h = new Vertex2f(10f, 15f); // не учитывается
-                limits_l = new Vertex2f(26f, 27f);
-                limits_t = new Vertex2f(8f, 9f); // одинаковый диапазон для всех моделей - (*)
-                limits_theta = new Vertex2f(49f, 51f);
+                limits_l = new Vertex2f(20f, 50f);
+                limits_t = new Vertex2f(8f, 15f); // одинаковый диапазон для всех моделей - (*)
+                limits_theta = new Vertex2f(10f, 80f);
             }
             if (type_comp == 3) // diamond
             {
                 //limits_h = new Vertex2f(34f, 48f); // не учитывается
-                limits_l = new Vertex2f(25f, 50f);
+                limits_l = new Vertex2f(20f, 50f);
                 limits_t = new Vertex2f(8f, 15f); // (*)
                 limits_theta = new Vertex2f(10f, 80f);
             }
             if (type_comp == 4) // hourglass
             {
-                limits_h = new Vertex2f(30f, 54f);
-                limits_l = new Vertex2f(5f, 10f);
-                limits_t = new Vertex2f(8f, 15f); // (*)
-                limits_theta = new Vertex2f(10f, 80f);
+                limits_h = new Vertex2f(47.5f, 48.5f);
+                limits_l = new Vertex2f(9.5f, 10.5f);
+                limits_t = new Vertex2f(9.5f, 10.5f); // (*)
+                limits_theta = new Vertex2f(59f, 61f);
             }
             if (type_comp == 5) // honeycomb
             {
-                limits_h = new Vertex2f(36f, 48f);
-                limits_l = new Vertex2f(8f, 14f);
+                //limits_h = new Vertex2f(36f, 48f);
+                limits_l = new Vertex2f(4f, 32f);
                 limits_t = new Vertex2f(8f, 15f); // (*)
                 limits_theta = new Vertex2f(100f, 170f);
             }
@@ -635,6 +640,30 @@ namespace Graphic
             Console.WriteLine("_______________________");
         }
 
+        void gpuCompute_Aux_def()
+        {
+            initLimits();
+
+            sizeXY = new Vertex4i(qual_comp, qual_comp, qual_map, depth_map);
+            load_vars_gl(idsAux_comp_map_def, new openGlobj());
+            for (int i = 0; i < qual_comp; i++)
+            {
+                float l = limits_l.x + (limits_l.y - limits_l.x) * (float)i / (float)qual_comp;
+                load_vars_intern_gl(idsAux_comp_map_def, l);
+                Gl.DispatchCompute((uint)sizeXY.x, (uint)sizeXY.x, (uint)sizeXY.x);
+                Gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);
+                // Console.WriteLine(toStringBuf(auxData.getData(), qual_map * 4, 4, "porosity_map"));
+                Console.WriteLine("map create____________________" + (i + 1) + "/" + qual_comp + " done ");
+            }
+            // var map_por = auxData.getData();
+
+            map_porose = reshape_map_porose(porosity_map.getData(), porosity_data.getData(), ref map_porose_data, ref pores_maxmin, false);
+            Console.WriteLine(toStringBuf(porosity_map.getData(), qual_map * 4, 4, "porosity_map"));
+            //Console.WriteLine("_______________________");
+            //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
+            Console.WriteLine("_______________________");
+        }
+
         void gpuCompute_Aux_ret(float porosity = 1, float pore_size = 1)
         {
 
@@ -689,7 +718,7 @@ namespace Graphic
             gpuCompute_Aux_one_t(t);
             var area = map_porose_area(pores_maxmin, t,type);           
             //addMeshWithoutNorm(translateMesh(area,0,-100), PrimitiveType.Lines);
-            addMeshWithoutNormColor(translateMesh(area, 0, -qual_map/2),color_const(area.Length,colors_def[type]), PrimitiveType.Lines);
+            addMeshWithoutNormColor(translateMesh(area, 0, 0),color_const(area.Length,colors_def[type]), PrimitiveType.Lines);//-qual_map/3
         }
 
 
@@ -723,11 +752,11 @@ namespace Graphic
             {
                 if(max_min_p[i]!=null)
                 {
-                    porose_area[i * 6] = 100*max_min_p[i][0];
+                    porose_area[i * 6] =100* max_min_p[i][0];
                     porose_area[i * 6 + 1] = i;
                     porose_area[i * 6 + 2] = 10*type;
 
-                    porose_area[i * 6 + 3] = 100*max_min_p[i][1];
+                    porose_area[i * 6 + 3] = 100 * max_min_p[i][1];
                     porose_area[i * 6 + 4] = i;
                     porose_area[i * 6 + 5] = 10*type;
                 }
@@ -1654,6 +1683,7 @@ namespace Graphic
             uint ShaderID = Gl.CreateShader(shaderType);
             Gl.ShaderSource(ShaderID, shSource);
             Gl.CompileShader(ShaderID);
+            //Console.WriteLine(shSource[0]);
             debugShaderComp(ShaderID);
             return ShaderID;
         }
