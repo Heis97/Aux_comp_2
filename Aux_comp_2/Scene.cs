@@ -89,6 +89,21 @@ namespace Aux_gpu
             }
         }
 
+       
+
+        private void but_comp_def_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var porose = Convert.ToSingle(t_box_porose.Text);
+                var pore_size = Convert.ToSingle(t_box_pore_size.Text);
+                GL1.show_cur_porose(porose, pore_size);
+            }
+            catch
+            {
+            }
+        }
+
         private void but_planeXY_Click(object sender, EventArgs e)
         {
             GL1.planeXY();

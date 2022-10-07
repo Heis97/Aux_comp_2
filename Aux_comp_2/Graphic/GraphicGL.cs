@@ -236,7 +236,7 @@ namespace Graphic
         int qual_comp = 100;//100
         int qual_map = 400;//400
         int depth_map = 10000;//10000
-        int type_comp = 5;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass, 5 - honeycomb
+        int type_comp = 6;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass, 5 - honeycomb, 6 - arrow-head
 
         float limits_ext = 0.01f;
 
@@ -519,6 +519,13 @@ namespace Graphic
                 limits_t = new Vertex2f(8f, 15f); // (*)
                 limits_theta = new Vertex2f(100f, 170f);
             }
+            if (type_comp == 6) // arrow-head
+            {
+                limits_h = new Vertex2f(39f, 41f); // theta2
+                limits_l = new Vertex2f(29f, 31f);
+                limits_t = new Vertex2f(9f, 11f); // (*)
+                limits_theta = new Vertex2f(14f, 16f); // theta1
+            }
             /*limits_h = new Vertex2f(5f, 30f);
             limits_l = new Vertex2f(2f, 20f);
             limits_t = new Vertex2f(1f, 1.5f);
@@ -658,7 +665,10 @@ namespace Graphic
             // var map_por = auxData.getData();
 
             map_porose = reshape_map_porose(porosity_map.getData(), porosity_data.getData(), ref map_porose_data, ref pores_maxmin, false);
-            Console.WriteLine(toStringBuf(porosity_map.getData(), qual_map * 4, 4, "porosity_map"));
+
+            Console.WriteLine(toStringBuf(porosity_map.getData(), qual_map * 4, 4, "porosity_map")); // выводится вся матрица
+            float porosity = 29.809f;
+            //Console.WriteLine(toStringBuf_column(porosity_map.getData(), qual_map * 4, 4, "porosity_map",((int)Math.Round(porosity*4)))); //выводится 1 столбец
             //Console.WriteLine("_______________________");
             //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
             Console.WriteLine("_______________________");
@@ -698,6 +708,11 @@ namespace Graphic
                     }                  
                 }
             }
+            gpuCompute_Aux_ret(porose, pore_size);
+        }
+
+        public void show_cur_porose_def(float porose, float pore_size)
+        {          
             gpuCompute_Aux_ret(porose, pore_size);
         }
         public void show_area_ppt(int type,int qual)
@@ -1099,6 +1114,36 @@ namespace Graphic
             txt.Append(" |\n--------------------------------\n");
             return txt.ToString();
        
+        }
+
+        string toStringBuf_column(float[] buff, int strip, int substrip, string name,int col_num)
+        {
+            if (buff == null)
+                return name + " null ";
+            StringBuilder txt = new StringBuilder();
+            txt.Append(name + " " + buff.Length);
+            for (int i = buff.Length / strip-1 ; i >=0 ; i--)
+            {
+                txt.Append("  | \n");
+                for (int j = 0; j < strip; j++)
+                {
+                    if (substrip != 0)
+                    {
+                        if (j % substrip == 0)
+                        {
+                            txt.Append("  | ");
+                        }
+                    }
+
+                    if(j>=col_num*substrip  && j <(col_num * substrip + substrip) )
+                    {
+                        txt.Append(buff[i * strip + j].ToString() + ", ");
+                    }
+                }
+            }
+            txt.Append(" |\n--------------------------------\n");
+            return txt.ToString();
+
         }
 
 

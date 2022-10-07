@@ -39,6 +39,7 @@ namespace Aux_gpu
             this.label2 = new System.Windows.Forms.Label();
             this.but_comp = new System.Windows.Forms.Button();
             this.but_planeXY = new System.Windows.Forms.Button();
+            this.but_comp_def = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -148,11 +149,22 @@ namespace Aux_gpu
             this.but_planeXY.UseVisualStyleBackColor = true;
             this.but_planeXY.Click += new System.EventHandler(this.but_planeXY_Click);
             // 
+            // but_comp_def
+            // 
+            this.but_comp_def.Location = new System.Drawing.Point(1792, 583);
+            this.but_comp_def.Name = "but_comp_def";
+            this.but_comp_def.Size = new System.Drawing.Size(100, 30);
+            this.but_comp_def.TabIndex = 10;
+            this.but_comp_def.Text = "Расчёт def";
+            this.but_comp_def.UseVisualStyleBackColor = true;
+            this.but_comp_def.Click += new System.EventHandler(this.but_comp_def_Click);
+            // 
             // Scene
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.but_comp_def);
             this.Controls.Add(this.but_planeXY);
             this.Controls.Add(this.but_comp);
             this.Controls.Add(this.label2);
@@ -183,6 +195,7 @@ namespace Aux_gpu
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button but_comp;
         private System.Windows.Forms.Button but_planeXY;
+        private System.Windows.Forms.Button but_comp_def;
     }
 }
 

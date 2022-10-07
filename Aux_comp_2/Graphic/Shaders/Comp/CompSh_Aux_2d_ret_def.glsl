@@ -2,17 +2,19 @@
 layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 layout (rgba32f, binding = 0) uniform  image2D aux_data;
 layout (rgba32f, binding = 1) uniform  image2D porosity_map;
-layout (rgba32f, binding = 2) uniform  image2D aux_data_in;
-layout (rgba32f, binding = 3) uniform  image2D porosity_map_data;
 
 uniform vec2 limits_h;
+uniform vec2 limits_l;
 uniform vec2 limits_t;
 uniform vec2 limits_theta;
 uniform float cur_l;
-uniform int type_comp;
 
-float filtr_dist = 0.1;
-uniform ivec4 sizeXY;//map_comp xy, map_poros z, map_por_depth w  
+uniform float porosity_inp;
+uniform float pore_size_inp;
+
+uniform int type_comp;//hjttfhf
+
+uniform ivec4 sizeXY;//map_comp xy, map_poros z, map_por_depth w 
 
 vec4 comp_pores_90(float h,float l ,float t, float theta)
 {
@@ -20,17 +22,18 @@ vec4 comp_pores_90(float h,float l ,float t, float theta)
 
     //Общий объем / размер пор
     float height_cell = 4 * t + 2 * l * sin(radians(theta));
-    float width_cell = 2 * (h - 2 * t - l * cos(radians(theta)));
+    float width_cell =2 * (h - 2 * t - l * cos(radians(theta)));
     float general_volume = height_cell * width_cell * width_cell;
     float pore_size_B_B = -2 * t + width_cell / 2;
     float pore_size_A_A = h - 2 * l * cos(radians(theta)) - 4 * t;
 
+
     //Пористость
     float porosity = (1 - unit_cell_volume / general_volume) * 100;
-
-    return (vec4 (porosity, pore_size_A_A * 0.1, pore_size_B_B * 0.1,0));
+    return (vec4 ( porosity, pore_size_A_A * 0.1, pore_size_B_B * 0.1,0));
 
 }
+
 vec4 comp_pores_45(float h,float l ,float t, float theta)
 {
 	float triangle_area = ((t * sin(radians(45))) * (t * cos(radians(45))));
@@ -56,21 +59,24 @@ vec4 comp_pores_45(float h,float l ,float t, float theta)
     // Пористость
     float porosity = (1 - unit_cell_volume / general_volume) * 100;
    
-    return (vec4 (porosity, pore_size_A_A * 0.1, pore_size_B_B * 0.1,0));
+    return (vec4 ( porosity, pore_size_A_A * 0.1, pore_size_B_B * 0.1,0));
 
 }
 
-vec4 comp_pores_triangles(float h1,float l ,float t, float theta) //проверено
+vec4 comp_pores_triangles(float h1,float l ,float t, float theta)
 {
-    float pore_size = (2 * l * tan(radians(theta / 2)) * cos(radians(theta)) - t);// 0.1 - ?
+    float pore_size = 0.1 * (2 * l * tan(radians(theta / 2)) * cos(radians(theta)) - t);// 0.1 - ?
     // Пористость
     float porosity = 100 * pow( (1 - t / (2 * l * tan(radians(theta/2)) * cos(radians(theta)))), 2); 
-    float h = l*cos(radians(theta));
+    
+    float h = l * cos(radians(theta));
    
-    return(vec4 (porosity, pore_size * 0.1, 0.1, h));
+    return(vec4 (porosity, pore_size, 0.1, h));
 }
-vec4 comp_pores_diamond(float h0,float l ,float t, float theta)// проверено
+
+vec4 comp_pores_diamond(float h0,float l ,float t, float theta)
 {
+  
     float h1 = l * cos(radians(theta));
 
     float h2 = sqrt(0.75 * t * t + pow(t *(0.5 - cos(radians(theta))) / sin(radians(theta)),2) );
@@ -91,28 +97,24 @@ vec4 comp_pores_diamond(float h0,float l ,float t, float theta)// провере
     return(vec4 (porosity, pore_size * 0.1, 0.1, h));
 }
 
-vec4 comp_pores_hourglass(float h,float l ,float t, float theta) // проверено
-{
-    
-  float g = l * cos(radians(theta)) + t / sin(radians(theta)) + t /(2 * tan(radians(theta)));
+vec4 comp_pores_hourglass(float h,float l ,float t, float theta)
+{ 
+     float g = l * cos(radians(theta)) + t / sin(radians(theta)) + t /(2 * tan(radians(theta)));
 
   float pore_square = l * sin(radians(theta))*(h-2*g+l*cos(radians(theta)));
   float all_square = (h-g)*(l*sin(radians(theta))+t/2);
 
   float porosity = pore_square / all_square;
 
-  float pore_size = ( h - 2 * (l * cos(radians(theta)) + t / sin(radians(theta)) + t /(2 * tan(radians(theta)))));
+  float pore_size = h - 2 * (l * cos(radians(theta)) + t / sin(radians(theta)) + t /(2 * tan(radians(theta))));
 
   //float square = all_square - pore_square
 
     return(vec4 (100*porosity, pore_size*0.1, g, 0.1));
 }
-vec4 comp_pores_honeycomb(float h1,float l ,float t, float theta) // проверено
-{
+vec4 comp_pores_honeycomb(float h,float l ,float t, float theta)
+{ 
     float g = l * cos(radians(theta)) + t / sin(radians(theta)) + t /(2 * tan(radians(theta)));
-
-    float h = 2 * t * cos(radians((theta-90))) + l;
-
     float pore_square = l * sin(radians(theta))*(h-2*g+l*cos(radians(theta)));
     float all_square = (h-g)*(l*sin(radians(theta))+t/2);
 
@@ -157,27 +159,9 @@ vec4 comp_pores_arrow_head(float h,float l ,float t, float theta) // theta = the
 
     float pore_size = 2 * G/( 1 / cos(radians(theta + theta2)) + 1);
 
-    return(vec4 (porosity, pore_size*0.1,H, 0.1));
+    return(vec4 (100*porosity, pore_size*0.1,H, 0.1));
 }
-
-bool filter_solv(int por_ind, int len, vec4 val)
-{      
-    for(int i=0; i<len; i++)
-    {
-        vec4 prev_val = imageLoad(porosity_map, ivec2(por_ind,i));
-        if( 
-        abs(prev_val.x - val.x)+
-        abs(prev_val.y - val.y)+
-        abs(prev_val.z - val.z)+
-        abs(prev_val.w - val.w)/10> filtr_dist)
-        {
-            return (true);
-        }
-    }
-    return (false);
-}
-
-vec4 comp_pores(float h,float l ,float t, float theta,int type)
+vec4 comp_pores(float h,float l ,float t, float theta, int type)
 {
     if(type==0)
     {
@@ -203,92 +187,99 @@ vec4 comp_pores(float h,float l ,float t, float theta,int type)
     {
         return (comp_pores_honeycomb(h,l,t,theta));
     }
-      else if(type==6)
+     else if(type==6)
     {
         return (comp_pores_arrow_head(h,l,t,theta));
     }
 }
 
-bool porosity_lim(float porosity_q, float porosity_min, float porosity_max)
+bool check_limits(float h,float l ,float t, float theta)
 {
-     float d_sc = sizeXY.z/100;
-    return (porosity_q / d_sc) >= porosity_min && (porosity_q / d_sc) <= porosity_max;
+    if (h < limits_h.x || h > limits_h.y)
+    {
+        return(false);
+    }
+    if (l < limits_l.x || l > limits_l.y)
+    {
+        return(false);
+    }
+    if (t < limits_t.x || t > limits_t.y)
+    {
+        return(false);
+    }
+    if (theta < limits_theta.x || theta > limits_theta.y)
+    {
+        return(false);
+    }
+    if(type_comp==1)
+    {
+        if (h-4*t-2*l*cos(radians(theta)) < 2*t)
+        {
+            return(false);
+        }
+    }
+    if(type_comp==4)
+    {
+        if (h-4*t/sin(radians(theta))-2*l*cos(radians(theta)) < t)
+        {
+            return(false);
+        }
+    }
+    if(type_comp==5)
+    {
+        if (h-4*t/sin(radians(theta))-2*l*cos(radians(theta)) < t)
+        {
+            return(false);
+        }
+    }
+    if(type_comp==6)
+    {
+        if (h+theta>=90)
+        {
+            return(false);
+        }
+    }
+    if(type_comp==0)
+    {
+        float R = 2*h*sin(radians(45))-2*l*cos(radians(theta));
+        if (sqrt(2)*(R/2-t) < 0.06)
+        {
+            return(false);
+        }
+    }
+    return(true);
 }
-
 
 void main() 
 {
-    ivec2 ipos = ivec2(gl_GlobalInvocationID.x,gl_GlobalInvocationID.y);
-    float h = limits_h.x+((limits_h.y-limits_h.x)*float(gl_GlobalInvocationID.x))/float(sizeXY.y);
-    float t = limits_t.x+((limits_t.y-limits_t.x)*float(gl_GlobalInvocationID.y))/float(sizeXY.x);
-	float theta = limits_theta.x+((limits_theta.y-limits_theta.x)*float(gl_GlobalInvocationID.z))/float(sizeXY.y);
-	vec4 pores_res = comp_pores(h,cur_l,t,theta,type_comp);//porosity, pore_size_A_A, pore_size_B_B
-
-    //pores_res.y = pores_res.x;
-    //pores_res.x = 30;
-
-    if(type_comp==2 || type_comp == 3)
-    {
-        h = pores_res.a;
-    }
-    
-    int porosity_q = int(float(sizeXY.z*pores_res.x)/100);
-   
+    int porosity_q = int(float(sizeXY.z)*porosity_inp/100);
     if (porosity_q >= 0 && porosity_q <= sizeXY.z-1)
-    //if (porosity_lim(porosity_q,20,60) && porosity_q <= sizeXY.z-1)
     {
-        if( pores_res.x>0 && pores_res.y>0 && pores_res.z>0)
+        ivec2 ipos_pores_ind = ivec2(porosity_q,sizeXY.w-1);
+        int ind_d = int(imageLoad(porosity_map, ipos_pores_ind).x);
+        int ind_i = 0;
+        for(int i=0; i < ind_d; i++)
         {
-            ivec2 ipos_pores_ind = ivec2(porosity_q,sizeXY.w-1);
-            vec3 inf = imageLoad(porosity_map, ipos_pores_ind).xyz;
-            int ind_d = int(inf.x);
-            float pore_size_min = inf.y;
-            float pore_size_max = inf.z;
-        
-            if(ind_d<sizeXY.w-3)
-            {           
-                bool comp = false;
-                if(ind_d>0)
-                {
-                    comp = filter_solv(porosity_q,ind_d,vec4(h,cur_l,t,theta));
-                }
-                else
-                {
-                    comp = true;
-                }
-                if(pores_res.y>0.95 || pores_res.y<0.6)
-                {
-                     comp = false;
-                }
-                comp = true;
-                if(comp)
-                {
-                    if(ind_d==0)
-                    {
-                        pore_size_min = 1000;
-                        pore_size_max = -1000;
-                    }
-                    if(pores_res.y>pore_size_max)
-                    {
-                        pore_size_max = pores_res.y;
-                    }
-                    if(pores_res.y<pore_size_min)
-                    {
-                        pore_size_min = pores_res.y;
-                    }
+            ivec2 ipos_pores = ivec2(porosity_q,i);
+            vec4 val = imageLoad(porosity_map, ipos_pores);
+            vec4 ret = comp_pores(val.x, val.y,val.z,val.w,type_comp);
 
-                    ivec2 ipos_pores = ivec2(porosity_q,ind_d);
+            //float k = pore_size_inp/ret.y;
+            float h = val.x;
+            float l = val.y;
+            float t = val.z;
+            float theta = val.w;
 
-                    imageStore(porosity_map, ipos_pores, vec4(h,cur_l,t,theta) );
-                    imageStore(porosity_map_data, ipos_pores, pores_res );
-                    ind_d++;
-                    imageStore(porosity_map, ipos_pores_ind, vec4(t ,pore_size_min,pore_size_max,pores_res.x) );
-                    //imageStore(porosity_map, ipos_pores_ind, vec4(ind_d,pore_size_min,t,pores_res.x) ); // вывод значений
-                }  
-                imageStore(aux_data_in, ivec2(porosity_q,ind_d), pores_res);
-            }  
+            vec4 ret_n = vec4(h,l,t,theta);
+            vec4 val_n = comp_pores(h,l,t,theta,type_comp);
+            if(check_limits(h,l,t,theta))// проверка, можно убирать
+            {
+                imageStore(aux_data, ivec2(ind_i,0), ret_n);
+                imageStore(aux_data, ivec2(ind_i,1), val_n);
+                imageStore(aux_data, ivec2(ind_i,2), vec4(porosity_inp,porosity_q,sizeXY.z,0));
+                ind_i++;
+            }    
         }
-              
-    }       
+    }      
 }	
 
