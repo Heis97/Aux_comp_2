@@ -236,7 +236,7 @@ namespace Graphic
         int qual_comp = 100;//100
         int qual_map = 400;//400
         int depth_map = 10000;//10000
-        int type_comp = 6;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass, 5 - honeycomb, 6 - arrow-head
+        int type_comp = 3;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass, 5 - honeycomb, 6 - arrow-head
 
         float limits_ext = 0.01f;
 
@@ -522,8 +522,8 @@ namespace Graphic
             if (type_comp == 6) // arrow-head
             {
                 limits_h = new Vertex2f(39f, 41f); // theta2
-                limits_l = new Vertex2f(29f, 31f);
-                limits_t = new Vertex2f(9f, 11f); // (*)
+                limits_l = new Vertex2f(8, 31f);
+                limits_t = new Vertex2f(8f, 15f); // (*)
                 limits_theta = new Vertex2f(14f, 16f); // theta1
             }
             /*limits_h = new Vertex2f(5f, 30f);
@@ -666,9 +666,9 @@ namespace Graphic
 
             map_porose = reshape_map_porose(porosity_map.getData(), porosity_data.getData(), ref map_porose_data, ref pores_maxmin, false);
 
-            Console.WriteLine(toStringBuf(porosity_map.getData(), qual_map * 4, 4, "porosity_map")); // выводится вся матрица
-            float porosity = 29.809f;
-            //Console.WriteLine(toStringBuf_column(porosity_map.getData(), qual_map * 4, 4, "porosity_map",((int)Math.Round(porosity*4)))); //выводится 1 столбец
+            //Console.WriteLine(toStringBuf(porosity_map.getData(), qual_map * 4, 4, "porosity_map")); // выводится вся матрица
+            float porosity = 20f;
+            Console.WriteLine(toStringBuf_column(porosity_map.getData(), qual_map * 4, 4, "porosity_map",((int)Math.Round(porosity*4)))); //выводится 1 столбец
             //Console.WriteLine("_______________________");
             //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
             Console.WriteLine("_______________________");
@@ -1124,14 +1124,14 @@ namespace Graphic
             txt.Append(name + " " + buff.Length);
             for (int i = buff.Length / strip-1 ; i >=0 ; i--)
             {
-                txt.Append("  | \n");
+                txt.Append("\n"); //(|)
                 for (int j = 0; j < strip; j++)
                 {
                     if (substrip != 0)
                     {
                         if (j % substrip == 0)
                         {
-                            txt.Append("  | ");
+                            //txt.Append("   "); // (|)
                         }
                     }
 
