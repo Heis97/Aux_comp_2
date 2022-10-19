@@ -236,7 +236,7 @@ namespace Graphic
         int qual_comp = 100;//100
         int qual_map = 400;//400
         int depth_map = 10000;//10000
-        int type_comp = 3;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass, 5 - honeycomb, 6 - arrow-head
+        int type_comp = 6;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass, 5 - honeycomb, 6 - arrow-head
 
         float limits_ext = 0.01f;
 
@@ -481,14 +481,14 @@ namespace Graphic
             {
                 limits_h = new Vertex2f(5f, 10f);
                 limits_l = new Vertex2f(1f, 10f);
-                limits_t = new Vertex2f(2f, 3f);
+                limits_t = new Vertex2f(8f, 15f);
                 limits_theta = new Vertex2f(10.0f, 90.0f);
             }
             if (type_comp == 1)
             {
                 limits_h = new Vertex2f(19f, 24f);
                 limits_l = new Vertex2f(5f, 14f);
-                limits_t = new Vertex2f(1f, 1.5f);
+                limits_t = new Vertex2f(8f, 15f);
                 limits_theta = new Vertex2f(10f, 90f);
             }
             if (type_comp == 2) // triangle 
@@ -507,10 +507,10 @@ namespace Graphic
             }
             if (type_comp == 4) // hourglass
             {
-                limits_h = new Vertex2f(47.5f, 48.5f);
-                limits_l = new Vertex2f(9.5f, 10.5f);
+                limits_h = new Vertex2f(30f, 80f);
+                limits_l = new Vertex2f(6f, 18f);
                 limits_t = new Vertex2f(9.5f, 10.5f); // (*)
-                limits_theta = new Vertex2f(59f, 61f);
+                limits_theta = new Vertex2f(10f, 80f);
             }
             if (type_comp == 5) // honeycomb
             {
@@ -521,10 +521,10 @@ namespace Graphic
             }
             if (type_comp == 6) // arrow-head
             {
-                limits_h = new Vertex2f(39f, 41f); // theta2
-                limits_l = new Vertex2f(8, 31f);
-                limits_t = new Vertex2f(8f, 15f); // (*)
-                limits_theta = new Vertex2f(14f, 16f); // theta1
+                limits_h = new Vertex2f(10f, 80f); // theta2
+                limits_l = new Vertex2f(8, 32f);
+                limits_t = new Vertex2f(9.5f, 10.5f); // (*)
+                limits_theta = new Vertex2f(10f,80f); // theta1
             }
             /*limits_h = new Vertex2f(5f, 30f);
             limits_l = new Vertex2f(2f, 20f);

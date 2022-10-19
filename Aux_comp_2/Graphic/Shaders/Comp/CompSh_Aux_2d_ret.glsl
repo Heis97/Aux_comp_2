@@ -112,9 +112,12 @@ vec4 comp_pores_hourglass(float h,float l ,float t, float theta)
 
     return(vec4 (100*porosity, pore_size*0.1, g, 0.1));
 }
-vec4 comp_pores_honeycomb(float h,float l ,float t, float theta)
-{ 
+vec4 comp_pores_honeycomb(float h1,float l ,float t, float theta) // проверено
+{
     float g = l * cos(radians(theta)) + t / sin(radians(theta)) + t /(2 * tan(radians(theta)));
+
+    float h = t / cos(radians((theta-90))) + l/2 - t * tan(radians(theta - 90))/2;
+
     float pore_square = l * sin(radians(theta))*(h-2*g+l*cos(radians(theta)));
     float all_square = (h-g)*(l*sin(radians(theta))+t/2);
 

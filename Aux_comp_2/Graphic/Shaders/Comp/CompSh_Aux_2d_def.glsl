@@ -111,7 +111,7 @@ vec4 comp_pores_honeycomb(float h1,float l ,float t, float theta) // прове�
 {
     float g = l * cos(radians(theta)) + t / sin(radians(theta)) + t /(2 * tan(radians(theta)));
 
-    float h = 2 * t * cos(radians((theta-90))) + l;
+    float h = t / cos(radians((theta-90))) + l/2 - t * tan(radians(theta - 90))/2;
 
     float pore_square = l * sin(radians(theta))*(h-2*g+l*cos(radians(theta)));
     float all_square = (h-g)*(l*sin(radians(theta))+t/2);
@@ -176,7 +176,22 @@ bool filter_solv(int por_ind, int len, vec4 val)
     }
     return (false);
 }
-
+bool filter_solv_t(int por_ind, int len, vec4 val)
+{      
+    for(int i=0; i<len; i++)
+    {
+        vec4 prev_val = imageLoad(porosity_map, ivec2(por_ind,i));
+        if( 
+        abs(prev_val.x - val.x)+
+        abs(prev_val.y - val.y)+
+        abs(prev_val.z - val.z)+
+        abs(prev_val.w - val.w)/10> filtr_dist)
+        {
+            return (true);
+        }
+    }
+    return (false);
+}
 vec4 comp_pores(float h,float l ,float t, float theta,int type)
 {
     if(type==0)
@@ -235,7 +250,7 @@ void main()
     int porosity_q = int(float(sizeXY.z*pores_res.x)/100);
    
     //if (porosity_q >= 0 && porosity_q <= sizeXY.z-1)
-    if (porosity_lim(porosity_q,1,100) && porosity_q <= sizeXY.z-1) 
+    if (porosity_lim(porosity_q,19,21) && porosity_q <= sizeXY.z-1) 
     {
         if( pores_res.x>0 && pores_res.y>0 && pores_res.z>0)
         {
@@ -254,10 +269,10 @@ void main()
                 }
                 else
                 {
-                    comp = false;
+                    comp = true;
                 }
-                comp = true;
-                if(pores_res.y<=0.69 || pores_res.y>=0.71) // ограничение по размеру пор
+               // comp = true;
+                if(pores_res.y<=0.79 || pores_res.y>=0.81) // ограничение по размеру пор
                 {
                      comp = false;
                 }

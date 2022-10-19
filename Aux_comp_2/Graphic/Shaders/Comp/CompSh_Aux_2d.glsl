@@ -106,26 +106,23 @@ vec4 comp_pores_hourglass(float h,float l ,float t, float theta) // провер
 
     return(vec4 (100*porosity, pore_size*0.1, g, 0.1));
 }
-vec4 comp_pores_honeycomb(float h,float l ,float t, float theta) // проверено
+vec4 comp_pores_honeycomb(float h1,float l ,float t, float theta) // проверено
 {
     float g = l * cos(radians(theta)) + t / sin(radians(theta)) + t /(2 * tan(radians(theta)));
-    // Пористость
 
-    //float porosity = l * sin(radians(theta)) * (h +l * cos(radians(theta)) - 2 * g) /  (h - g) / (l * sin(radians(theta)) + t / 2);
+    float h = t / cos(radians((theta-90))) + l/2 - t * tan(radians(theta - 90))/2;
+
     float pore_square = l * sin(radians(theta))*(h-2*g+l*cos(radians(theta)));
     float all_square = (h-g)*(l*sin(radians(theta))+t/2);
 
     float porosity = pore_square/all_square;
     float pore_size = 2 * l * cos(radians(theta-90));
-    // Размер пор
-   // float pore_size  = (h - 2 * (l * cos(radians(theta)) + t / sin(radians(theta)) + t / (2 * tan(radians(theta))))) ;
-    
-   //float pore_size = h - 2 * (l * cos(radians(theta)) + t / sin(radians(theta)) + t /(2 * tan(radians(theta))));
 
     return(vec4 (100*porosity, pore_size*0.1, g, 0.1));
 }
 vec4 comp_pores_arrow_head(float h,float l ,float t, float theta) // theta = theta1, h = theta2
 {
+
     
     float theta2  =  h; 
     
