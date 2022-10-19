@@ -25,12 +25,21 @@ namespace Aux_gpu
         {
             InitializeComponent();
             glControl1.MouseWheel += GlControl1_MouseWheel;
+            
             PreInitializeScene();
+            
         }
 
         public void PreInitializeScene()
         {
             GL1.addGlobalFrame(100);
+            var h = Convert.ToDouble(textBox_g_h.Text);
+            var l = Convert.ToDouble(textBox_g_l.Text);
+            var t = Convert.ToDouble(textBox_g_t.Text);
+            var theta = Convert.ToDouble(textBox_g_theta.Text);
+
+            var mesh = Generate_stl.gen_aucs(h, l, t, theta);
+            GL1.addMesh(mesh, PrimitiveType.Triangles);
         }
         
         #region gl_control
@@ -107,6 +116,21 @@ namespace Aux_gpu
         private void but_planeXY_Click(object sender, EventArgs e)
         {
             GL1.planeXY();
+        }
+
+        private void but_stl_gen_Click(object sender, EventArgs e)
+        {
+            var h = Convert.ToDouble(textBox_g_h.Text);
+            var l = Convert.ToDouble(textBox_g_l.Text);
+            var t = Convert.ToDouble(textBox_g_t.Text);
+            var theta = Convert.ToDouble(textBox_g_theta.Text);
+
+            var mesh = Generate_stl.gen_aucs(h, l, t,theta);
+            //GL1.add_buff_gl(mesh, mesh, mesh, PrimitiveType.Triangles);
+            GL1.buffersGl.objs = new List<openGlobj>();
+            GL1.addGlobalFrame(100);
+            GL1.addMesh(mesh, PrimitiveType.Triangles);
+            GL1.SortObj();
         }
     }
 }

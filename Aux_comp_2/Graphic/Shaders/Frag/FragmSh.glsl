@@ -39,7 +39,7 @@ void main() {
 	    color.xyz = MaterialAmbientColor + MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
 	    //color.xyz = vec3(0.5,0,0.5);
 		color.w = 1.0;
-	}
-	
-	
+	}   
+	color.xyz = MaterialAmbientColor + MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
+	   //color.xyz = vec3(0.5,0,0.5);
 }

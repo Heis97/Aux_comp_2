@@ -71,12 +71,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuxComp\AuxInit.cs" />
+    <Compile Include="Geometry\Color3d_GL.cs" />
     <Compile Include="Geometry\Flat3d_GL.cs" />
     <Compile Include="Geometry\Flat_4P.cs" />
+    <Compile Include="Geometry\Generate_stl.cs" />
     <Compile Include="Geometry\Line3d_GL.cs" />
-    <Compile Include="Geometry\LineF.cs" />
+    <Compile Include="Geometry\Matr3x3f_.cs" />
+    <Compile Include="Geometry\Matr4x4f.cs" />
     <Compile Include="Geometry\Point3d_GL.cs" />
     <Compile Include="Geometry\PointF.cs" />
+    <Compile Include="Geometry\Polygon3d_GL.cs" />
+    <Compile Include="Geometry\RasterMap.cs" />
     <Compile Include="Geometry\Vector3d_GL.cs" />
     <Compile Include="Graphic\BuffersGl.cs" />
     <Compile Include="Graphic\GraphicGL.cs" />
@@ -235,6 +240,18 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Emgu.CV">
+      <Version>4.5.5.4823</Version>
+    </PackageReference>
+    <PackageReference Include="Emgu.CV.Bitmap">
+      <Version>4.5.5.4823</Version>
+    </PackageReference>
+    <PackageReference Include="Emgu.CV.runtime.windows">
+      <Version>4.5.5.4823</Version>
+    </PackageReference>
+    <PackageReference Include="Emgu.CV.UI">
+      <Version>4.5.5.4823</Version>
+    </PackageReference>
     <PackageReference Include="OpenGL.Net">
       <Version>0.8.4</Version>
     </PackageReference>

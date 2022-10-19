@@ -164,7 +164,7 @@ namespace Graphic
 
         int currentMonitor = 0;
         public int textureVis = 0;
-        float LightPower = 1.0f;
+        float LightPower = 100000.0f;
         public BuffersGl buffersGl = new BuffersGl();
         public Matrix4x4f[] VPs;
         public Matrix4x4f[] Vs;
@@ -172,7 +172,7 @@ namespace Graphic
         public Vertex2f MouseLoc;
         public Vertex2f MouseLocGL;
         Vertex3f translMesh = new Vertex3f(0.0f, 0.0f, 0.0f);
-        Vertex3f lightPos = new Vertex3f(0f, 0.0f, 0.0f);
+        Vertex3f lightPos = new Vertex3f(100f, 100.0f, 100.0f);
         Vertex3f MaterialDiffuse = new Vertex3f(0.5f, 0.5f, 0.5f);
         Vertex3f MaterialAmbient = new Vertex3f(0.2f, 0.2f, 0.2f);
         Vertex3f MaterialSpecular = new Vertex3f(0.1f, 0.1f, 0.1f);
@@ -331,7 +331,7 @@ namespace Graphic
                             ids = idsLsOne;
                         }
                     }
-                    
+                    //Console.WriteLine(opgl_obj.vert_len+" "+ opgl_obj.tp);
                     load_vars_gl(ids, opgl_obj);
                     opgl_obj.useBuffers();
                     if (opgl_obj.count > 1)

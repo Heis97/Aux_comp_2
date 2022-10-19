@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Emgu.CV.Structure;
+using Emgu.CV.Util;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -49,7 +51,10 @@ namespace Geometry
             p.exist = false;
             return p;
         }
-
+        public PointF Clone()
+        {
+            return new PointF(X, Y);
+        }
         public void normalize()
         {
             var n = (float)Math.Sqrt(X * X + Y * Y);
@@ -85,6 +90,19 @@ namespace Geometry
             }
             return ret;
         }
+        public static Point[] toPoint(MCvPoint3D32f[] ps)
+        {
+            if (ps == null)
+            {
+                return null;
+            }
+            var ret = new System.Drawing.Point[ps.Length];
+            for (int i = 0; i < ps.Length; i++)
+            {
+                ret[i] = new System.Drawing.Point((int)ps[i].X, (int)ps[i].Y);
+            }
+            return ret;
+        }
         public static PointF[] toPointF(System.Drawing.PointF[] ps)
         {
             if (ps == null)
@@ -98,7 +116,34 @@ namespace Geometry
             }
             return ret;
         }
+        public static PointF[] toPointF(MCvPoint3D32f[] ps)
+        {
+            if (ps == null)
+            {
+                return null;
+            }
+            var ret = new PointF[ps.Length];
+            for (int i = 0; i < ps.Length; i++)
+            {
+                ret[i] = new PointF(ps[i].X, ps[i].Y);
+            }
+            return ret;
+        }
         public static System.Drawing.PointF[] toSystemPoint(PointF[] ps)
+        {
+            if (ps == null)
+            {
+                return null;
+            }
+            var ret = new System.Drawing.PointF[ps.Length];
+            for (int i = 0; i < ps.Length; i++)
+            {
+                ret[i] = new System.Drawing.PointF(ps[i].X, ps[i].Y);
+            }
+            return ret;
+        }
+
+        public static System.Drawing.PointF[] toSystemPoint(MCvPoint3D32f[] ps)
         {
             if (ps == null)
             {
@@ -132,7 +177,15 @@ namespace Geometry
             return ret;
         }
 
-
+        public static PointF[] toPointF(VectorOfPoint ps)
+        {
+            var ret = new PointF[ps.Size];
+            for (int i = 0; i < ps.Size; i++)
+            {
+                ret[i] = new PointF(ps[i].X, ps[i].Y);
+            }
+            return ret;
+        }
         public static double operator *(PointF p, PointF p1)
         {
             return p.X * p1.X + p.Y * p1.Y;
@@ -157,7 +210,7 @@ namespace Geometry
         }
         public override string ToString()
         {
-            return X.ToString() + " " + Y.ToString() + ";";
+            return X.ToString() + " " + Y.ToString()+" ";
         }
 
     }
