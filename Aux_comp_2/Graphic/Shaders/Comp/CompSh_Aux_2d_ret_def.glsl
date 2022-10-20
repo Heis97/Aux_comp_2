@@ -123,6 +123,7 @@ vec4 comp_pores_honeycomb(float h,float l ,float t, float theta)
 
     return(vec4 (100*porosity, pore_size*0.1, g, 0.1));
 }
+
 vec4 comp_pores_arrow_head(float h,float l ,float t, float theta) // theta = theta1, h = theta2
 {
     
@@ -161,6 +162,8 @@ vec4 comp_pores_arrow_head(float h,float l ,float t, float theta) // theta = the
 
     return(vec4 (100*porosity, pore_size*0.1,H, 0.1));
 }
+
+
 vec4 comp_pores(float h,float l ,float t, float theta, int type)
 {
     if(type==0)
@@ -250,6 +253,15 @@ bool check_limits(float h,float l ,float t, float theta)
     return(true);
 }
 
+bool check_pore_size(float val, float pore_s)
+{
+    if(abs(pore_s - val) < 0.1)
+    {
+        return (true);
+    }
+    return (false);
+}
+
 void main() 
 {
     int porosity_q = int(float(sizeXY.z)*porosity_inp/100);
@@ -258,6 +270,8 @@ void main()
         ivec2 ipos_pores_ind = ivec2(porosity_q,sizeXY.w-1);
         int ind_d = int(imageLoad(porosity_map, ipos_pores_ind).x);
         int ind_i = 0;
+        imageStore(aux_data, ivec2(0,0), vec4(ind_d ,2,3,4));
+        
         for(int i=0; i < ind_d; i++)
         {
             ivec2 ipos_pores = ivec2(porosity_q,i);
@@ -272,11 +286,12 @@ void main()
 
             vec4 ret_n = vec4(h,l,t,theta);
             vec4 val_n = comp_pores(h,l,t,theta,type_comp);
-            if(check_limits(h,l,t,theta))// проверка, можно убирать
+
+            if(check_limits(h,l,t,theta) && check_pore_size(val_n.y,pore_size_inp))// проверка, можно убирать
             {
                 imageStore(aux_data, ivec2(ind_i,0), ret_n);
                 imageStore(aux_data, ivec2(ind_i,1), val_n);
-                imageStore(aux_data, ivec2(ind_i,2), vec4(porosity_inp,porosity_q,sizeXY.z,0));
+                imageStore(aux_data, ivec2(ind_i,2), vec4(porosity_inp,porosity_q,sizeXY.z,pore_size_inp));
                 ind_i++;
             }    
         }

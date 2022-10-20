@@ -11,6 +11,9 @@ uniform vec2 limits_theta;
 uniform float cur_l;
 uniform int type_comp;
 
+uniform float porosity_inp;
+uniform float pore_size_inp;
+
 float filtr_dist = 0.1;
 uniform ivec4 sizeXY;//map_comp xy, map_poros z, map_por_depth w  
 
@@ -234,8 +237,8 @@ void main()
     
     int porosity_q = int(float(sizeXY.z*pores_res.x)/100);
    
-    //if (porosity_q >= 0 && porosity_q <= sizeXY.z-1)
-    if (porosity_lim(porosity_q,1,100) && porosity_q <= sizeXY.z-1) 
+    if (porosity_q >= 0 && porosity_q <= sizeXY.z-1)
+    //if (porosity_lim(porosity_q,1,100) && porosity_q <= sizeXY.z-1) 
     {
         if( pores_res.x>0 && pores_res.y>0 && pores_res.z>0)
         {
@@ -254,14 +257,12 @@ void main()
                 }
                 else
                 {
-                    comp = false;
+                    comp = true;
                 }
-                comp = true;
-                if(pores_res.y<=0.69 || pores_res.y>=0.71) // ограничение по размеру пор
+                if(abs(pores_res.y-pore_size_inp)>=0.05) // ограничение по размеру пор
                 {
                      comp = false;
                 }
-                //comp = true;
                 if(comp)
                 {
                     if(ind_d==0)

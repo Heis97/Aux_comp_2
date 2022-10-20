@@ -7,7 +7,7 @@ using Objects;
 
 namespace AuxComp
 {
-    static public class AuxInit
+    static public class AuxProc
     {
         static public ObjectAuxGL[] loadObjs(int len)
         {
@@ -19,6 +19,23 @@ namespace AuxComp
             return objs;
         }
 
+        static public string data_to_str(float[][] data)
+        {
+            StringBuilder txt = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                for (int j = 0; j < data[i].Length; j++)
+                {
+                    if(j == 4)
+                    {
+                        txt.Append(" | ");
+                    }
+                    txt.Append(data[i][j]+", ");
+                }
+                txt.Append(" \n");
+            }
+            return txt.ToString();    
+        }
 
     }
 

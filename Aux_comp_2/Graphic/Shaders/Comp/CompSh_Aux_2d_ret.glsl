@@ -272,8 +272,6 @@ void main()
             float t = val.z*k;
             float theta = val.w;
 
-
-
             vec4 ret_n = vec4(h,l,t,theta);
 
             vec4 val_n = comp_pores(h,l,t,theta,type_comp);

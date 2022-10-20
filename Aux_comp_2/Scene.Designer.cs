@@ -44,7 +44,15 @@ namespace Aux_gpu
             this.textBox_g_l = new System.Windows.Forms.TextBox();
             this.textBox_g_t = new System.Windows.Forms.TextBox();
             this.textBox_g_theta = new System.Windows.Forms.TextBox();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.but_save_stl = new System.Windows.Forms.Button();
+            this.tb_model_name = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // glControl1
@@ -61,7 +69,7 @@ namespace Aux_gpu
             this.glControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.glControl1.MultisampleBits = ((uint)(8u));
             this.glControl1.Name = "glControl1";
-            this.glControl1.Size = new System.Drawing.Size(1480, 978);
+            this.glControl1.Size = new System.Drawing.Size(1480, 1029);
             this.glControl1.StencilBits = ((uint)(0u));
             this.glControl1.TabIndex = 0;
             this.glControl1.ContextCreated += new System.EventHandler<OpenGL.GlControlEventArgs>(this.glControl1_ContextCreated);
@@ -71,7 +79,7 @@ namespace Aux_gpu
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(12, 290);
+            this.richTextBox1.Location = new System.Drawing.Point(488, 234);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(402, 652);
             this.richTextBox1.TabIndex = 1;
@@ -84,28 +92,29 @@ namespace Aux_gpu
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(1875, 45);
             this.trackBar1.TabIndex = 3;
+            this.trackBar1.Visible = false;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // t_box_porose
             // 
-            this.t_box_porose.Location = new System.Drawing.Point(314, 12);
+            this.t_box_porose.Location = new System.Drawing.Point(100, 5);
             this.t_box_porose.Name = "t_box_porose";
             this.t_box_porose.Size = new System.Drawing.Size(100, 20);
             this.t_box_porose.TabIndex = 4;
-            this.t_box_porose.Text = "1";
+            this.t_box_porose.Text = "50";
             // 
             // t_box_pore_size
             // 
-            this.t_box_pore_size.Location = new System.Drawing.Point(314, 38);
+            this.t_box_pore_size.Location = new System.Drawing.Point(100, 31);
             this.t_box_pore_size.Name = "t_box_pore_size";
             this.t_box_pore_size.Size = new System.Drawing.Size(100, 20);
             this.t_box_pore_size.TabIndex = 5;
-            this.t_box_pore_size.Text = "1";
+            this.t_box_pore_size.Text = "0.6";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(227, 15);
+            this.label1.Location = new System.Drawing.Point(13, 8);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(81, 13);
             this.label1.TabIndex = 6;
@@ -114,7 +123,7 @@ namespace Aux_gpu
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(219, 41);
+            this.label2.Location = new System.Drawing.Point(5, 34);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 13);
             this.label2.TabIndex = 7;
@@ -122,12 +131,13 @@ namespace Aux_gpu
             // 
             // but_comp
             // 
-            this.but_comp.Location = new System.Drawing.Point(314, 64);
+            this.but_comp.Location = new System.Drawing.Point(100, 57);
             this.but_comp.Name = "but_comp";
             this.but_comp.Size = new System.Drawing.Size(100, 30);
             this.but_comp.TabIndex = 8;
             this.but_comp.Text = "Расчёт";
             this.but_comp.UseVisualStyleBackColor = true;
+            this.but_comp.Visible = false;
             this.but_comp.Click += new System.EventHandler(this.but_comp_Click);
             // 
             // but_planeXY
@@ -138,21 +148,22 @@ namespace Aux_gpu
             this.but_planeXY.TabIndex = 9;
             this.but_planeXY.Text = "XY";
             this.but_planeXY.UseVisualStyleBackColor = true;
+            this.but_planeXY.Visible = false;
             this.but_planeXY.Click += new System.EventHandler(this.but_planeXY_Click);
             // 
             // but_comp_def
             // 
-            this.but_comp_def.Location = new System.Drawing.Point(314, 100);
+            this.but_comp_def.Location = new System.Drawing.Point(100, 57);
             this.but_comp_def.Name = "but_comp_def";
             this.but_comp_def.Size = new System.Drawing.Size(100, 30);
             this.but_comp_def.TabIndex = 10;
-            this.but_comp_def.Text = "Расчёт def";
+            this.but_comp_def.Text = "Расчитать";
             this.but_comp_def.UseVisualStyleBackColor = true;
             this.but_comp_def.Click += new System.EventHandler(this.but_comp_def_Click);
             // 
             // but_stl_gen
             // 
-            this.but_stl_gen.Location = new System.Drawing.Point(314, 243);
+            this.but_stl_gen.Location = new System.Drawing.Point(314, 118);
             this.but_stl_gen.Name = "but_stl_gen";
             this.but_stl_gen.Size = new System.Drawing.Size(100, 41);
             this.but_stl_gen.TabIndex = 11;
@@ -162,7 +173,7 @@ namespace Aux_gpu
             // 
             // textBox_g_h
             // 
-            this.textBox_g_h.Location = new System.Drawing.Point(208, 183);
+            this.textBox_g_h.Location = new System.Drawing.Point(314, 14);
             this.textBox_g_h.Name = "textBox_g_h";
             this.textBox_g_h.Size = new System.Drawing.Size(100, 20);
             this.textBox_g_h.TabIndex = 12;
@@ -170,7 +181,7 @@ namespace Aux_gpu
             // 
             // textBox_g_l
             // 
-            this.textBox_g_l.Location = new System.Drawing.Point(208, 209);
+            this.textBox_g_l.Location = new System.Drawing.Point(314, 40);
             this.textBox_g_l.Name = "textBox_g_l";
             this.textBox_g_l.Size = new System.Drawing.Size(100, 20);
             this.textBox_g_l.TabIndex = 13;
@@ -178,7 +189,7 @@ namespace Aux_gpu
             // 
             // textBox_g_t
             // 
-            this.textBox_g_t.Location = new System.Drawing.Point(208, 235);
+            this.textBox_g_t.Location = new System.Drawing.Point(314, 66);
             this.textBox_g_t.Name = "textBox_g_t";
             this.textBox_g_t.Size = new System.Drawing.Size(100, 20);
             this.textBox_g_t.TabIndex = 14;
@@ -186,18 +197,88 @@ namespace Aux_gpu
             // 
             // textBox_g_theta
             // 
-            this.textBox_g_theta.Location = new System.Drawing.Point(208, 261);
+            this.textBox_g_theta.Location = new System.Drawing.Point(314, 92);
             this.textBox_g_theta.Name = "textBox_g_theta";
             this.textBox_g_theta.Size = new System.Drawing.Size(100, 20);
             this.textBox_g_theta.TabIndex = 15;
             this.textBox_g_theta.Text = "55.6";
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(3, 165);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.RowHeadersWidth = 20;
+            this.dataGridView1.Size = new System.Drawing.Size(411, 864);
+            this.dataGridView1.TabIndex = 16;
+            this.dataGridView1.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEnter);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(283, 17);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(25, 13);
+            this.label3.TabIndex = 17;
+            this.label3.Text = "h = ";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(283, 43);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(21, 13);
+            this.label4.TabIndex = 18;
+            this.label4.Text = "l = ";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(283, 69);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(22, 13);
+            this.label5.TabIndex = 19;
+            this.label5.Text = "t = ";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(265, 95);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(43, 13);
+            this.label6.TabIndex = 20;
+            this.label6.Text = "theta = ";
+            // 
+            // but_save_stl
+            // 
+            this.but_save_stl.Location = new System.Drawing.Point(208, 118);
+            this.but_save_stl.Name = "but_save_stl";
+            this.but_save_stl.Size = new System.Drawing.Size(100, 41);
+            this.but_save_stl.TabIndex = 21;
+            this.but_save_stl.Text = "Сохранить STL";
+            this.but_save_stl.UseVisualStyleBackColor = true;
+            this.but_save_stl.Click += new System.EventHandler(this.but_save_stl_Click);
+            // 
+            // tb_model_name
+            // 
+            this.tb_model_name.Location = new System.Drawing.Point(8, 129);
+            this.tb_model_name.Name = "tb_model_name";
+            this.tb_model_name.Size = new System.Drawing.Size(192, 20);
+            this.tb_model_name.TabIndex = 22;
+            this.tb_model_name.Text = "model_name";
             // 
             // Scene
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.tb_model_name);
+            this.Controls.Add(this.but_save_stl);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.textBox_g_theta);
             this.Controls.Add(this.textBox_g_t);
             this.Controls.Add(this.textBox_g_l);
@@ -210,11 +291,14 @@ namespace Aux_gpu
             this.Controls.Add(this.label1);
             this.Controls.Add(this.t_box_pore_size);
             this.Controls.Add(this.t_box_porose);
-            this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.glControl1);
+            this.Controls.Add(this.trackBar1);
+            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.richTextBox1);
             this.Name = "Scene";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -237,6 +321,13 @@ namespace Aux_gpu
         private System.Windows.Forms.TextBox textBox_g_l;
         private System.Windows.Forms.TextBox textBox_g_t;
         private System.Windows.Forms.TextBox textBox_g_theta;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button but_save_stl;
+        private System.Windows.Forms.TextBox tb_model_name;
     }
 }
 
