@@ -31,7 +31,27 @@ namespace Geometry
             flat3D = new Flat3d_GL(v3.x, v3.y, v3.z, -v3 * P1);
       
         }
+        Polygon3d_GL inv_norm()
+        {
+            //var pol_c = pol.Clone();
 
+            //pol_c.flat3D = pol_c.flat3D.
+            return new Polygon3d_GL(ps[1], ps[0], ps[2]);
+        }
+        Polygon3d_GL Clone()
+        {
+            return new Polygon3d_GL(ps[0], ps[1], ps[2]);
+        }
+
+        static public Polygon3d_GL[] invNorm(Polygon3d_GL[] pols)
+        {
+            var pols_mul = new Polygon3d_GL[pols.Length];
+            for (int i = 0; i < pols.Length; i++)
+            {
+                pols_mul[i] = pols[i].inv_norm();
+            }
+            return pols_mul;
+        }
         static public Polygon3d_GL[] multMatr(Polygon3d_GL[] pols, Matrix<double> matrix)
         {
             var pols_mul = new Polygon3d_GL[pols.Length];

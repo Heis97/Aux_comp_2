@@ -221,8 +221,9 @@ namespace Geometry
                     {0,0,1,0 },
                     {0,0,0,1 },
                 }));
+            trls_sim_y = Polygon3d_GL.invNorm(trls_sim_y);
             var trls_l_2 = trls_sim_y.ToList();
-            trls_l_2.AddRange(trls_arr);
+            trls_l_2.AddRange( trls_arr);
             var trls_arr_2 = trls_l_2.ToArray();
 
             var trls_sim_x = Polygon3d_GL.multMatr(trls_arr_2,
@@ -233,6 +234,7 @@ namespace Geometry
                     {0,0,1,0 },
                     {0,0,0,1 },
                 }));
+            trls_sim_x = Polygon3d_GL.invNorm(trls_sim_x);
             var trls_l_3 = trls_sim_x.ToList();
             trls_l_3.AddRange(trls_arr_2);
             var trls_arr_3 = trls_l_3.ToArray();
@@ -245,6 +247,7 @@ namespace Geometry
                     {0,0,-1,0 },
                     {0,0,0,1 },
                 }));
+            trls_sim_z = Polygon3d_GL.invNorm(trls_sim_z);
             var trls_l_4 = trls_sim_z.ToList();
             trls_l_4.AddRange(trls_arr_3);
             var trls_arr_4 = trls_l_4.ToArray();
