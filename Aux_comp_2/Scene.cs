@@ -150,6 +150,7 @@ namespace Aux_gpu
             GL1.buffersGl.objs = new List<openGlobj>();
             GL1.addGlobalFrame(10);
             GL1.addMesh(mesh, PrimitiveType.Triangles);
+            //GL1.addMesh(mesh, PrimitiveType.Lines);
             GL1.SortObj();
         }
 
@@ -175,6 +176,7 @@ namespace Aux_gpu
 
         private void but_save_stl_Click(object sender, EventArgs e)
         {
+            Console.WriteLine(mesh);
             if(mesh!=null)
             {
                 STLmodel.saveMesh(mesh, tb_model_name.Text);

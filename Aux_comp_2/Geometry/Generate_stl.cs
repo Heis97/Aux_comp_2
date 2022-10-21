@@ -166,9 +166,9 @@ namespace Geometry
 
                 new Polygon3d_GL(ps[37],ps[13],ps[38]),
                 new Polygon3d_GL(ps[38],ps[13],ps[11]),
-                new Polygon3d_GL(ps[39],ps[37],ps[40]),
+               // new Polygon3d_GL(ps[39],ps[37],ps[40]),
 
-                new Polygon3d_GL(ps[40],ps[37],ps[38]),
+                //new Polygon3d_GL(ps[40],ps[37],ps[38]),
                 new Polygon3d_GL(ps[36],ps[39],ps[29]),
                 new Polygon3d_GL(ps[29],ps[39],ps[40]),
 
@@ -189,8 +189,8 @@ namespace Geometry
                 new Polygon3d_GL(ps[47],ps[44],ps[43]),
 
                 new Polygon3d_GL(ps[43],ps[44],ps[30]),
-                new Polygon3d_GL(ps[48],ps[47],ps[42]),
-                new Polygon3d_GL(ps[42],ps[47],ps[43]),
+                //new Polygon3d_GL(ps[48],ps[47],ps[42]),
+               // new Polygon3d_GL(ps[42],ps[47],ps[43]),
 
                 new Polygon3d_GL(ps[49],ps[48],ps[50]),
                 new Polygon3d_GL(ps[50],ps[48],ps[42]),
@@ -264,7 +264,9 @@ namespace Geometry
             trls_l_4.AddRange(trls_arr_4);
             var trls_arr_5 = trls_l_5.ToArray();
 
-            return Polygon3d_GL.toMesh(trls_arr_5)[0];
+
+            var trls_arr_6 = Polygon3d_GL.del_same_pol(trls_arr_5);
+            return Polygon3d_GL.toMesh(trls_arr_6)[0];
         }
     }
 }

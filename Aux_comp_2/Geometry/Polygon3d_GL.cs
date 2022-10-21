@@ -486,5 +486,46 @@ namespace Geometry
             var z = (-flat3D.D - flat3D.A * p.x - flat3D.B * p.y) / flat3D.C;
             return new Point3d_GL(p.x, p.y, z);
         }
+
+        static public Polygon3d_GL[] del_same_pol(Polygon3d_GL[] pols)
+        {
+            var pols_fil = new List<Polygon3d_GL>();
+            for (int i = 0; i < pols.Length; i++)
+            {
+                int same = 0;
+                for (int j = 0; j < pols.Length; j++)
+                {
+                    if(i!=j)
+                        if (compare_pol(pols[i], pols[j]))
+                            same++;                   
+                }
+                if(same==0)
+                {
+                    pols_fil.Add(pols[i]);
+                }
+            }
+            
+            return pols_fil.ToArray();
+        }
+
+        static bool compare_pol(Polygon3d_GL pol1, Polygon3d_GL pol2)
+        {
+            int cnsd_count = 0;
+            for (int i = 0; i < pol1.ps.Length; i++) 
+            { 
+                for (int j = 0; j < pol2.ps.Length; j++)
+                {
+                    var dist = (pol1.ps[i] - pol2.ps[j]).magnitude();
+                    if (dist < 0.001)
+                    {
+                        cnsd_count++;
+                    }
+                }
+            }
+
+            if (cnsd_count>=3) return true;
+            else return false;
+        }
+
     }
 }
