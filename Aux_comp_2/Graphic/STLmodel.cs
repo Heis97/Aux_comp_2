@@ -180,7 +180,7 @@ namespace Graphic
         {
             var sb = new StringBuilder();
             //string text = "solid\n";
-            sb.Append("solid\n");
+            sb.Append("solid "+name+"\r\n");
             for (int i=0; i<mesh.Length;i+=9)
             {
                 var text1 = "";
@@ -194,20 +194,20 @@ namespace Graphic
                     U.z * V.x - U.x * V.z,
                     U.x * V.y - U.y * V.x);
                 var Norm1 = Norm.normalize();
-                text1 += "facet normal " + Norm1.x + " " + Norm1.y + " " + Norm1.z + "\n";
-                text1 += "outer loop\n";
-                text1 += "vertex " + mesh[i] + " " + mesh[i + 1] + " " + mesh[i + 2] + "\n";
-                text1 += "vertex " + mesh[i+3] + " " + mesh[i + 4] + " " + mesh[i + 5] + "\n";
-                text1 += "vertex " + mesh[i+6] + " " + mesh[i + 7] + " " + mesh[i + 8] + "\n";
-                text1 += "endloop\n";
-                text1 += "endfacet \n";
+                text1 += "   facet normal " + string.Format("{0:e}",Norm1.x )+ " " + string.Format("{0:e}", Norm1.y) + " " + string.Format("{0:e}", Norm1.z) + "\r\n";
+                text1 += "      outer loop\r\n";
+                text1 += "         vertex " + string.Format("{0:e}", mesh[i]) + " " + string.Format("{0:e}", mesh[i + 1]) + " " + string.Format("{0:e}", mesh[i + 2]) + "\r\n";
+                text1 += "         vertex " + string.Format("{0:e}", mesh[i+3]) + " " + string.Format("{0:e}", mesh[i + 4]) + " " + string.Format("{0:e}", mesh[i + 5]) + "\r\n";
+                text1 += "         vertex " + string.Format("{0:e}", mesh[i+6]) + " " + string.Format("{0:e}", mesh[i + 7]) + " " + string.Format("{0:e}", mesh[i + 8]) + "\r\n";
+                text1 += "      endloop\r\n";
+                text1 += "   endfacet\r\n";
                 //text += text1;
                 sb.Append(text1);
 
                
             }
 
-            sb.Append("endsolid\n");
+            sb.Append("endsolid\r\n");
 
             Console.WriteLine("startWRITE");
             var wr = new StreamWriter(name + ".stl");

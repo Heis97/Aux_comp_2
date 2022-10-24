@@ -166,9 +166,13 @@ namespace Geometry
 
                 new Polygon3d_GL(ps[37],ps[13],ps[38]),
                 new Polygon3d_GL(ps[38],ps[13],ps[11]),
-               // new Polygon3d_GL(ps[39],ps[37],ps[40]),
+                //-------------------------
+               /* new Polygon3d_GL(ps[39],ps[37],ps[40]),
+               new Polygon3d_GL(ps[48],ps[47],ps[42]),
+                new Polygon3d_GL(ps[42],ps[47],ps[43]),
+                new Polygon3d_GL(ps[40],ps[37],ps[38]),*/
 
-                //new Polygon3d_GL(ps[40],ps[37],ps[38]),
+                //-------------------------
                 new Polygon3d_GL(ps[36],ps[39],ps[29]),
                 new Polygon3d_GL(ps[29],ps[39],ps[40]),
 
@@ -189,8 +193,7 @@ namespace Geometry
                 new Polygon3d_GL(ps[47],ps[44],ps[43]),
 
                 new Polygon3d_GL(ps[43],ps[44],ps[30]),
-                //new Polygon3d_GL(ps[48],ps[47],ps[42]),
-               // new Polygon3d_GL(ps[42],ps[47],ps[43]),
+               
 
                 new Polygon3d_GL(ps[49],ps[48],ps[50]),
                 new Polygon3d_GL(ps[50],ps[48],ps[42]),
@@ -251,13 +254,13 @@ namespace Geometry
             var trls_l_4 = trls_sim_z.ToList();
             trls_l_4.AddRange(trls_arr_3);
             var trls_arr_4 = trls_l_4.ToArray();
-
+            var k = 1;
             var trls_xyz = Polygon3d_GL.multMatr(trls_arr_4,
                 new Matrix<double>(new double[,]
                 {
-                    {1,0,0,0 },
-                    {0,0,1,0 },
-                    {0,1,0,0 },
+                    {k*1,0,0,0 },
+                    {0,0,-k*1,0 },
+                    {0,k*1,0,0 },
                     {0,0,0,1 },
                 }));
             var trls_l_5 = trls_xyz.ToList();

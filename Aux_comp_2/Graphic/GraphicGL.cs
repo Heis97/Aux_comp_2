@@ -483,16 +483,16 @@ namespace Graphic
         {
             if (type_comp == 0)
             {
-                limits_h = new Vertex2f(5f, 10f);
-                limits_l = new Vertex2f(1f, 10f);
-                limits_t = new Vertex2f(2f, 3f);
+                limits_h = new Vertex2f(0.5f, 1f);
+                limits_l = new Vertex2f(0.1f, 1f);
+                limits_t = new Vertex2f(0.2f, 0.3f);
                 limits_theta = new Vertex2f(10.0f, 90.0f);
             }
             if (type_comp == 1)
             {
-                limits_h = new Vertex2f(19f, 24f);
-                limits_l = new Vertex2f(5f, 14f);
-                limits_t = new Vertex2f(1f, 1.5f);
+                limits_h = new Vertex2f(1.9f, 2.4f);
+                limits_l = new Vertex2f(0.5f, 1.4f);
+                limits_t = new Vertex2f(0.1f, 0.15f);
                 limits_theta = new Vertex2f(10f, 90f);
             }
             if (type_comp == 2) // triangle 

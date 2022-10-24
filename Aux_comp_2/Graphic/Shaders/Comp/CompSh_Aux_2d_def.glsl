@@ -31,7 +31,7 @@ vec4 comp_pores_90(float h,float l ,float t, float theta)
     //Пористость
     float porosity = (1 - unit_cell_volume / general_volume) * 100;
 
-    return (vec4 (porosity, pore_size_A_A * 0.1, pore_size_B_B * 0.1,0));
+    return (vec4 (porosity, pore_size_A_A, pore_size_B_B,0));
 
 }
 vec4 comp_pores_45(float h,float l ,float t, float theta)
@@ -59,7 +59,7 @@ vec4 comp_pores_45(float h,float l ,float t, float theta)
     // Пористость
     float porosity = (1 - unit_cell_volume / general_volume) * 100;
    
-    return (vec4 (porosity, pore_size_A_A * 0.1, pore_size_B_B * 0.1,0));
+    return (vec4 (porosity, pore_size_A_A, pore_size_B_B,0));
 
 }
 

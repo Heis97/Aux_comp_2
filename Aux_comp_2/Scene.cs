@@ -32,7 +32,7 @@ namespace Aux_gpu
 
         public void PreInitializeScene()
         {
-            GL1.addGlobalFrame(10);
+            GL1.addGlobalFrame(2);
             var h = Convert.ToDouble(textBox_g_h.Text);
             var l = Convert.ToDouble(textBox_g_l.Text);
             var t = Convert.ToDouble(textBox_g_t.Text);
@@ -148,7 +148,7 @@ namespace Aux_gpu
             mesh = Generate_stl.gen_aucs(h, l, t,theta);
             //GL1.add_buff_gl(mesh, mesh, mesh, PrimitiveType.Triangles);
             GL1.buffersGl.objs = new List<openGlobj>();
-            GL1.addGlobalFrame(10);
+            GL1.addGlobalFrame(2);
             GL1.addMesh(mesh, PrimitiveType.Triangles);
             //GL1.addMesh(mesh, PrimitiveType.Lines);
             GL1.SortObj();

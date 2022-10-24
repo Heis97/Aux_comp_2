@@ -177,7 +177,7 @@ namespace Aux_gpu
             this.textBox_g_h.Name = "textBox_g_h";
             this.textBox_g_h.Size = new System.Drawing.Size(100, 20);
             this.textBox_g_h.TabIndex = 12;
-            this.textBox_g_h.Text = "5.8";
+            this.textBox_g_h.Text = "0.58";
             // 
             // textBox_g_l
             // 
@@ -185,7 +185,7 @@ namespace Aux_gpu
             this.textBox_g_l.Name = "textBox_g_l";
             this.textBox_g_l.Size = new System.Drawing.Size(100, 20);
             this.textBox_g_l.TabIndex = 13;
-            this.textBox_g_l.Text = "1.43";
+            this.textBox_g_l.Text = "0.143";
             // 
             // textBox_g_t
             // 
@@ -193,7 +193,7 @@ namespace Aux_gpu
             this.textBox_g_t.Name = "textBox_g_t";
             this.textBox_g_t.Size = new System.Drawing.Size(100, 20);
             this.textBox_g_t.TabIndex = 14;
-            this.textBox_g_t.Text = "2.03";
+            this.textBox_g_t.Text = "0.2";
             // 
             // textBox_g_theta
             // 
