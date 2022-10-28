@@ -145,6 +145,9 @@ namespace Graphic
         public int porosity_inp_ID;
 
         public int type_comp_ID;
+        public int filtr_dist_ID;
+        public int porose_eps_ID;
+
 
     }
 
@@ -222,7 +225,7 @@ namespace Graphic
         IDs idsAux_comp_map_one_t = new IDs();
         IDs idsAux_comp_map_def = new IDs();
 
-        TextureGL auxData_2d_out, porosity_map, auxData,porosity_data;
+        TextureGL auxData_2d_out, porosity_map, auxData,porosity_data, porosity_col, porosity_col_data;
         Vertex2f limits_h = new Vertex2f(5f, 10f);
         Vertex2f limits_l = new Vertex2f(1f, 10f);
         Vertex2f limits_t = new Vertex2f(2f, 3f);
@@ -240,6 +243,9 @@ namespace Graphic
         int type_comp = 0;//0 - 45, 1 - 90, 2 - triangle, 3 - diamond, 4 - hourglass, 5 - honeycomb, 6 - arrow-head
 
         float limits_ext = 0.01f;
+
+        public  float filtr_dist = 10.5f;
+        public float porose_eps = 1f;
 
         float[][] map_porose = null;
         float[][] map_porose_data = null;
@@ -404,7 +410,7 @@ namespace Graphic
             idsAux_ret.programID = createShaderCompute(assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d_ret.glsl" }));
             init_vars_gl(idsAux_ret);
 
-            idsAux_comp_map_def.programID = createShaderCompute(assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d_def.glsl" }));
+            idsAux_comp_map_def.programID = createShaderCompute(assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d_def_2.glsl" }));
             init_vars_gl(idsAux_comp_map_def);
 
             idsAux_ret_def.programID = createShaderCompute(assembCode(new string[] { @"Graphic\Shaders\Comp\CompSh_Aux_2d_ret_def.glsl" }));
@@ -432,6 +438,8 @@ namespace Graphic
             porosity_map = new TextureGL(1, qual_map, depth_map, PixelFormat.Rgba);
             auxData = new TextureGL(2, qual_map, qual_map, PixelFormat.Rgba);
             porosity_data = new TextureGL(3, qual_map, depth_map, PixelFormat.Rgba);
+            porosity_col = new TextureGL(4, qual_comp, depth_map, PixelFormat.Rgba);
+            porosity_col_data = new TextureGL(5, qual_comp, depth_map, PixelFormat.Rgba);
             //Console.WriteLine(toStringBuf(auxData_2d_out.getData(), qual * 4, 4, "aux_2d"));
             return true;
         }
@@ -478,6 +486,9 @@ namespace Graphic
             ids.stindID = Gl.GetUniformLocation(ids.programID, "stind");
             ids.targetCamID = Gl.GetUniformLocation(ids.programID, "targetCam");
             ids.targetCamIndID = Gl.GetUniformLocation(ids.programID, "targetCamInd");
+
+            ids.filtr_dist_ID = Gl.GetUniformLocation(ids.programID, "filtr_dist");
+            ids.porose_eps_ID = Gl.GetUniformLocation(ids.programID, "porose_eps");
         }
         void initLimits() // лимиты 
         {
@@ -589,7 +600,10 @@ namespace Graphic
             Gl.Uniform2f(ids.MouseLocID, 1, MouseLoc);
             Gl.Uniform2f(ids.MouseLocGLID, 1, MouseLocGL);
             Gl.Uniform1i(ids.textureVisID, 1, textureVis);
-           // Gl.Uniform1i(ids.lightVisID, 1, lightVis);
+
+            Gl.Uniform1f(ids.filtr_dist_ID, 1, filtr_dist);
+            Gl.Uniform1f(ids.porose_eps_ID, 1, porose_eps);
+            // Gl.Uniform1i(ids.lightVisID, 1, lightVis);
         }
 
         private void load_vars_intern_gl(IDs ids,float cur_l, float cur_t=1f)
@@ -664,22 +678,29 @@ namespace Graphic
                 load_vars_intern_gl(idsAux_comp_map_def, l);
                 Gl.DispatchCompute((uint)sizeXY.x, (uint)sizeXY.x, (uint)sizeXY.x);
                 Gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);
-                // Console.WriteLine(toStringBuf(auxData.getData(), qual_map * 4, 4, "porosity_map"));
-                Console.WriteLine("map create____________________" + (i + 1) + "/" + qual_comp + " done ");
             }
-            // var map_por = auxData.getData();
 
-            //map_porose = reshape_map_porose(porosity_map.getData(), porosity_data.getData(), ref map_porose_data, ref pores_maxmin, false);
+            var ret = extr_val_Buf_column(porosity_col.getData(), porosity_data.getData(), qual_map * 4, 4, "porosity_map", ((int)Math.Round(porosity * 4)));
 
-            //Console.WriteLine(toStringBuf(porosity_map.getData(), qual_map * 4, 4, "porosity_map")); // выводится вся матрица
-            //float porosity = 20f;
-            //var ret = toStringBuf_column(porosity_map.getData(), qual_map * 4, 4, "porosity_map", ((int)Math.Round(porosity * 4)));
-            var ret = extr_val_Buf_column(porosity_map.getData(), porosity_data.getData(), qual_map * 4, 4, "porosity_map", ((int)Math.Round(porosity * 4)));
-            //Console.WriteLine(); //выводится 1 столбец
-            //Console.WriteLine(toStringBuf_column(porosity_data.getData(), qual_map * 4, 4, "porosity_map", ((int)Math.Round(porosity * 4))));
-            //Console.WriteLine("_______________________");
-            //Console.WriteLine(toStringBuf(auxData.getData(), 8, 4, "aux"));
-            //Console.WriteLine("_______________________");
+            return ret;
+        }
+
+        public float[][] gpuCompute_Aux_def_2(float porosity = 50, float pore_size = 1)
+        {
+            init_textures_aux_2d();
+            initLimits();
+
+            sizeXY = new Vertex4i(qual_comp, qual_comp, qual_map, depth_map);
+            load_vars_gl(idsAux_comp_map_def, new openGlobj(), porosity, pore_size);
+            for (int i = 0; i < qual_comp; i++)
+            {
+                float l = limits_l.x + (limits_l.y - limits_l.x) * (float)i / (float)qual_comp;
+                load_vars_intern_gl(idsAux_comp_map_def, l);
+                Gl.DispatchCompute((uint)sizeXY.x, (uint)sizeXY.x, (uint)sizeXY.x);
+                Gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);
+            }
+
+            var ret = extr_val_Buf_column_2(porosity_col.getData(), porosity_col_data.getData(), 4);
             return ret;
         }
 
@@ -1161,10 +1182,12 @@ namespace Graphic
                 return null;
             StringBuilder txt = new StringBuilder();
             var vals = new List<float[]>();
+            
             //txt.Append(name + " " + buff.Length);
             for (int i = 0; i < buff1.Length / strip; i++)
             {
                 var sub_val = new List<float>();
+                
                 var sub_var = new List<float>();
                 //txt.Append("\n"); //(|)
                 for (int j = 0; j < strip; j++)
@@ -1200,7 +1223,62 @@ namespace Graphic
 
         }
 
+        float[][] extr_val_Buf_column_1(float[] buff1, int strip)
+        {
+            if (buff1 == null)
+                return null;
+            var vals = new List<float[]>();
+            Console.WriteLine(buff1.Length + " buff1.Length");
+            int ind = 0;    
+            for (int i = 0; i < buff1.Length / strip; i++)
+            {
+                var sub_val = new List<float>();
+                for (int j = 0; j < strip; j++)
+                {
+                    sub_val.Add(buff1[i * strip + j]);
+                }
+                ind++;
+                if (sub_val.Sum() > 0.1)
+                {
+                    vals.Add(sub_val.ToArray());
+                    //foreach (var v in sub_val) Console.Write(v);
+                    //Console.WriteLine(";");
+                }
+            }
+            Console.WriteLine(ind);
+            return vals.ToArray();
 
+        }
+        float[][] extr_val_Buf_column_2(float[] buff1, float[] buff2, int strip)
+        {
+            if (buff1 == null)
+                return null;
+            var vals = new List<float[]>();
+            Console.WriteLine(buff1.Length + " buff1.Length");
+            int ind = 0;
+            for (int i = 0; i < buff1.Length / strip; i++)
+            {
+                var sub_val = new List<float>();
+                for (int j = 0; j < strip; j++)
+                {
+                    sub_val.Add(buff1[i * strip + j]);
+                }
+                for (int j = 0; j < strip; j++)
+                {
+                    sub_val.Add(buff2[i * strip + j]);
+                }
+                ind++;
+                if (sub_val.Sum() > 0.1)
+                {
+                    vals.Add(sub_val.ToArray());
+                    //foreach (var v in sub_val) Console.Write(v);
+                    //Console.WriteLine(";");
+                }
+            }
+            Console.WriteLine(ind);
+            return vals.ToArray();
+
+        }
 
         string toStringBufs(float[] buff1, float[] buff2, int strip, int substrip, string name)
         {

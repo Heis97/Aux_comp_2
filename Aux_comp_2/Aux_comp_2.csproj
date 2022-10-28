@@ -109,6 +109,7 @@
     <Compile Include="Graphic\openGlobj.cs" />
     <Compile Include="Graphic\STLmodel.cs" />
     <Compile Include="Graphic\TransRotZoom.cs" />
+    <Compile Include="Model\FiniteAnalyse.cs" />
     <Compile Include="Model\GeometryUtil.cs" />
     <Compile Include="Model\Model3d.cs" />
     <Compile Include="Model\STLtoOBJ.cs" />
@@ -134,6 +135,9 @@
       <DependentUpon>Scene.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Graphic\Shaders\Comp\CompSh.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphic\Shaders\Comp\CompSh_Aux_2d_def_2.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Graphic\Shaders\Comp\CompSh_Aux_2d_def.glsl">
@@ -262,6 +266,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BriefFiniteElement.Net">
+      <Version>2.0.6</Version>
+    </PackageReference>
     <PackageReference Include="Emgu.CV">
       <Version>4.5.5.4823</Version>
     </PackageReference>

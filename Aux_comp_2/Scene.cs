@@ -32,6 +32,7 @@ namespace Aux_gpu
 
         public void PreInitializeScene()
         {
+            label6.Text = "\u03B8, мм";
             GL1.addGlobalFrame(2);
             var h = Convert.ToDouble(textBox_g_h.Text);
             var l = Convert.ToDouble(textBox_g_l.Text);
@@ -102,13 +103,18 @@ namespace Aux_gpu
 
         private void but_comp_def_Click(object sender, EventArgs e)
         {
+            var porose = Convert.ToSingle(t_box_porose.Text);
+            var pore_size = Convert.ToSingle(t_box_pore_size.Text);
+            Console.WriteLine("beg");
+            GL1.filtr_dist = Convert.ToSingle(tb_filtr_dist.Text);
+            GL1.porose_eps = Convert.ToSingle(tb_porose_eps.Text);
+            var ret = GL1.gpuCompute_Aux_def_2(porose, pore_size);
+            Console.WriteLine("end");
+            //richTextBox1.Text = AuxProc.data_to_str(ret);
+            fill_table(ret);
             try
             {
-                var porose = Convert.ToSingle(t_box_porose.Text);
-                var pore_size = Convert.ToSingle(t_box_pore_size.Text);
-                var ret = GL1.gpuCompute_Aux_def(porose, pore_size);
-                //richTextBox1.Text = AuxProc.data_to_str(ret);
-                fill_table(ret);
+                
 
 
             }
@@ -120,7 +126,11 @@ namespace Aux_gpu
         void fill_table(float[][] data)
         {
             //dataGridView1.Dock = DockStyle.Fill;
-            
+            if (data.Length==0)
+            {
+                Console.WriteLine("solutions not found");
+                return;
+            }
             dataGridView1.RowCount = data.Length;
             dataGridView1.ColumnCount = data[0].Length;
             for (int i = 0; i < data.Length; i++)
@@ -144,7 +154,6 @@ namespace Aux_gpu
             var l = Convert.ToDouble(textBox_g_l.Text);
             var t = Convert.ToDouble(textBox_g_t.Text);
             var theta = Convert.ToDouble(textBox_g_theta.Text);
-
             mesh = Generate_stl.gen_aucs(h, l, t,theta);
             //GL1.add_buff_gl(mesh, mesh, mesh, PrimitiveType.Triangles);
             GL1.buffersGl.objs = new List<openGlobj>();

@@ -59,7 +59,7 @@ vec4 comp_pores_45(float h,float l ,float t, float theta)
     // Пористость
     float porosity = (1 - unit_cell_volume / general_volume) * 100;
    
-    return (vec4 (porosity, pore_size_A_A, pore_size_B_B,0));
+    return (vec4 (porosity, pore_size_A_A, pore_size_B_B,unit_cell_volume));
 
 }
 
@@ -238,7 +238,7 @@ void main()
     int porosity_q = int(float(sizeXY.z*pores_res.x)/100);
    
     if (porosity_q >= 0 && porosity_q <= sizeXY.z-1)
-    //if (porosity_lim(porosity_q,1,100) && porosity_q <= sizeXY.z-1) 
+   // if (porosity_lim(porosity_q,1,100) && porosity_q <= sizeXY.z-1) 
     {
         if( pores_res.x>0 && pores_res.y>0 && pores_res.z>0)
         {
