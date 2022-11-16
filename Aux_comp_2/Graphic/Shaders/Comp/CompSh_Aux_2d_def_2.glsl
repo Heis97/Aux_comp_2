@@ -45,12 +45,12 @@ vec4 comp_pores_45(float h,float l ,float t, float theta)
     // Пористость
     float porosity = (1 - unit_cell_volume / general_volume) * 100;
    
-    return (vec4 (porosity, pore_size_A_A, pore_size_B_B,unit_cell_volume));
+    return (vec4 (porosity, pore_size_B_B, pore_size_A_A,unit_cell_volume));
 
 }
 
 
-bool filter_solv(int por_ind, int len, vec4 val)
+bool filter_solv(int por_ind, int len, vec4 val,vec4 ret)
 {      
     for(int i=0; i<len; i++)
     {
@@ -61,7 +61,7 @@ bool filter_solv(int por_ind, int len, vec4 val)
         abs(prev_val.z - val.z)+
         abs(prev_val.w - val.w)/10> filtr_dist)
         {
-            return (true);
+            return (true);           
         }
     }
     return (false);
@@ -106,7 +106,7 @@ void main()
                 bool comp = false;
                 if(ind_d>0)
                 {
-                    comp = filter_solv(porosity_q,ind_d,vec4(h,cur_l,t,theta));
+                    comp = filter_solv(porosity_q,ind_d,vec4(h,cur_l,t,theta),pores_res);
                 }
                 else
                 {
