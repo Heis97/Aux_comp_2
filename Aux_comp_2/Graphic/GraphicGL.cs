@@ -497,7 +497,7 @@ namespace Graphic
                 limits_h = new Vertex2f(0.5f, 1f);
                 limits_l = new Vertex2f(0.1f, 1f);
                 limits_t = new Vertex2f(0.2f, 0.3f);
-                limits_theta = new Vertex2f(10.0f, 90.0f);
+                limits_theta = new Vertex2f(10.0f, 80.0f);
             }
             if (type_comp == 1)
             {

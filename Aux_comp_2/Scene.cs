@@ -14,6 +14,7 @@ using Model;
 using Geometry;
 using System.Threading;
 using AuxComp;
+using System.IO;
 
 namespace Aux_gpu
 {
@@ -103,20 +104,21 @@ namespace Aux_gpu
 
         private void but_comp_def_Click(object sender, EventArgs e)
         {
-            var porose = Convert.ToSingle(t_box_porose.Text);
-            var pore_size = Convert.ToSingle(t_box_pore_size.Text);
-            Console.WriteLine("beg");
-            GL1.filtr_dist = Convert.ToSingle(tb_filtr_dist.Text);
-            GL1.porose_eps = Convert.ToSingle(tb_porose_eps.Text);
-            var ret = GL1.gpuCompute_Aux_def_2(porose, pore_size);
-            Console.WriteLine("end");
-            //richTextBox1.Text = AuxProc.data_to_str(ret);
-            fill_table(ret);
+            
             try
             {
-                
-
-
+                dataGridView1.Rows.Clear();
+                dataGridView1.Refresh();
+                var porose = Convert.ToSingle(t_box_porose.Text);
+                var pore_size = Convert.ToSingle(t_box_pore_size.Text);
+                Console.WriteLine("beg");
+                GL1.filtr_dist = Convert.ToSingle(tb_filtr_dist.Text);
+                GL1.porose_eps = Convert.ToSingle(tb_porose_eps.Text);
+                var ret = GL1.gpuCompute_Aux_def_2(porose, pore_size);
+                Console.WriteLine("end");
+                //richTextBox1.Text = AuxProc.data_to_str(ret);
+                fill_table(ret);
+                saveData(ret, porose+" "+ pore_size + " "+ GL1.filtr_dist + " "+ GL1.porose_eps);
             }
             catch
             {
@@ -128,9 +130,11 @@ namespace Aux_gpu
             //dataGridView1.Dock = DockStyle.Fill;
             if (data.Length==0)
             {
+                label_no_sol.Text = "solutions not found";
                 Console.WriteLine("solutions not found");
                 return;
             }
+            label_no_sol.Text = "";
             dataGridView1.RowCount = data.Length;
             dataGridView1.ColumnCount = data[0].Length;
             for (int i = 0; i < data.Length; i++)
@@ -140,9 +144,25 @@ namespace Aux_gpu
                     dataGridView1.Rows[i].Cells[j].Value = data[i][j];
                 }
             }
-            dataGridView1.Update();
+            dataGridView1.Refresh();
+           
         }
-
+        void saveData(float[][] data,string name)
+        {
+            var sb = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                for (int j = 0; j < data[i].Length; j++)
+                {
+                    sb.Append(data[i][j]+" ");
+                }
+                sb.Append("\n");
+            }
+            var wr = new StreamWriter(name + ".txt");
+            wr.Write(sb);
+            Console.WriteLine("stopWRITE");
+            wr.Close();
+        }
         private void but_planeXY_Click(object sender, EventArgs e)
         {
             GL1.planeXY();

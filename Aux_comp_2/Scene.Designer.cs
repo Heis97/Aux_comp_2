@@ -52,6 +52,7 @@ namespace Aux_gpu
             this.label7 = new System.Windows.Forms.Label();
             this.tb_porose_eps = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.label_no_sol = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -273,11 +274,20 @@ namespace Aux_gpu
             this.label8.TabIndex = 26;
             this.label8.Text = "eps";
             // 
+            // label_no_sol
+            // 
+            this.label_no_sol.AutoSize = true;
+            this.label_no_sol.Location = new System.Drawing.Point(97, 95);
+            this.label_no_sol.Name = "label_no_sol";
+            this.label_no_sol.Size = new System.Drawing.Size(0, 13);
+            this.label_no_sol.TabIndex = 27;
+            // 
             // Scene
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.label_no_sol);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.tb_porose_eps);
             this.Controls.Add(this.label7);
@@ -334,6 +344,7 @@ namespace Aux_gpu
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tb_porose_eps;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label_no_sol;
     }
 }
 
