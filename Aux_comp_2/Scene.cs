@@ -40,7 +40,7 @@ namespace Aux_gpu
             var t = Convert.ToDouble(textBox_g_t.Text);
             var theta = Convert.ToDouble(textBox_g_theta.Text);
 
-            var mesh = Generate_stl.gen_aucs(h, l, t, theta);
+            var mesh = Generate_stl.gen_aucs_v2(h, l, t, theta);
             GL1.addMesh(mesh, PrimitiveType.Triangles);
         }
         
