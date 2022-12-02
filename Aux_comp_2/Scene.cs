@@ -33,7 +33,7 @@ namespace Aux_gpu
 
         public void PreInitializeScene()
         {
-            label6.Text = "\u03B8, мм";
+            label6.Text = "\u03B8,\u00B0";
             GL1.addGlobalFrame(2);
             var h = Convert.ToDouble(textBox_g_h.Text);
             var l = Convert.ToDouble(textBox_g_l.Text);
@@ -128,6 +128,8 @@ namespace Aux_gpu
         void fill_table(float[][] data)
         {
             //dataGridView1.Dock = DockStyle.Fill;
+            
+
             if (data.Length==0)
             {
                 label_no_sol.Text = "solutions not found";
@@ -142,10 +144,26 @@ namespace Aux_gpu
                 for (int j = 0; j < data[i].Length; j++)
                 {
                     dataGridView1.Rows[i].Cells[j].Value = data[i][j];
+                   // if(j == 4) dataGridView1.Rows[i].Cells[j].Value ="";
                 }
             }
+
+
             dataGridView1.Refresh();
-           
+            dataGridView1.Columns[0].HeaderText = "h";
+            dataGridView1.Columns[1].HeaderText = "l";
+            dataGridView1.Columns[2].HeaderText = "t";
+            dataGridView1.Columns[3].HeaderText = "theta";
+
+            dataGridView1.Columns[4].HeaderText = "Пористость";
+            dataGridView1.Columns[5].HeaderText = "Размер пор";
+            dataGridView1.Columns[6].HeaderText = "Объём ячейки";
+
+  
+
+            
+
+
         }
         void saveData(float[][] data,string name)
         {
@@ -210,6 +228,11 @@ namespace Aux_gpu
             {
                 STLmodel.saveMesh(mesh, tb_model_name.Text);
             }
+        }
+
+        private void toolTip_pores_Popup(object sender, PopupEventArgs e)
+        {
+
         }
     }
 }

@@ -29,6 +29,7 @@ namespace Aux_gpu
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.glControl1 = new OpenGL.GlControl();
             this.t_box_porose = new System.Windows.Forms.TextBox();
             this.t_box_pore_size = new System.Windows.Forms.TextBox();
@@ -53,6 +54,8 @@ namespace Aux_gpu
             this.tb_porose_eps = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label_no_sol = new System.Windows.Forms.Label();
+            this.toolTip_pores = new System.Windows.Forms.ToolTip(this.components);
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -85,6 +88,7 @@ namespace Aux_gpu
             this.t_box_porose.Size = new System.Drawing.Size(100, 20);
             this.t_box_porose.TabIndex = 4;
             this.t_box_porose.Text = "50";
+            this.toolTip_pores.SetToolTip(this.t_box_porose, "Пористость");
             // 
             // t_box_pore_size
             // 
@@ -93,6 +97,7 @@ namespace Aux_gpu
             this.t_box_pore_size.Size = new System.Drawing.Size(100, 20);
             this.t_box_pore_size.TabIndex = 5;
             this.t_box_pore_size.Text = "0.6";
+            this.toolTip_pores.SetToolTip(this.t_box_pore_size, "Размер пор");
             // 
             // label1
             // 
@@ -135,7 +140,7 @@ namespace Aux_gpu
             // 
             // but_stl_gen
             // 
-            this.but_stl_gen.Location = new System.Drawing.Point(662, 118);
+            this.but_stl_gen.Location = new System.Drawing.Point(392, 114);
             this.but_stl_gen.Name = "but_stl_gen";
             this.but_stl_gen.Size = new System.Drawing.Size(100, 41);
             this.but_stl_gen.TabIndex = 11;
@@ -145,7 +150,7 @@ namespace Aux_gpu
             // 
             // textBox_g_h
             // 
-            this.textBox_g_h.Location = new System.Drawing.Point(662, 14);
+            this.textBox_g_h.Location = new System.Drawing.Point(392, 10);
             this.textBox_g_h.Name = "textBox_g_h";
             this.textBox_g_h.Size = new System.Drawing.Size(100, 20);
             this.textBox_g_h.TabIndex = 12;
@@ -153,7 +158,7 @@ namespace Aux_gpu
             // 
             // textBox_g_l
             // 
-            this.textBox_g_l.Location = new System.Drawing.Point(662, 40);
+            this.textBox_g_l.Location = new System.Drawing.Point(392, 36);
             this.textBox_g_l.Name = "textBox_g_l";
             this.textBox_g_l.Size = new System.Drawing.Size(100, 20);
             this.textBox_g_l.TabIndex = 13;
@@ -161,7 +166,7 @@ namespace Aux_gpu
             // 
             // textBox_g_t
             // 
-            this.textBox_g_t.Location = new System.Drawing.Point(662, 66);
+            this.textBox_g_t.Location = new System.Drawing.Point(392, 62);
             this.textBox_g_t.Name = "textBox_g_t";
             this.textBox_g_t.Size = new System.Drawing.Size(100, 20);
             this.textBox_g_t.TabIndex = 14;
@@ -169,7 +174,7 @@ namespace Aux_gpu
             // 
             // textBox_g_theta
             // 
-            this.textBox_g_theta.Location = new System.Drawing.Point(662, 92);
+            this.textBox_g_theta.Location = new System.Drawing.Point(392, 88);
             this.textBox_g_theta.Name = "textBox_g_theta";
             this.textBox_g_theta.Size = new System.Drawing.Size(100, 20);
             this.textBox_g_theta.TabIndex = 15;
@@ -189,7 +194,7 @@ namespace Aux_gpu
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(621, 17);
+            this.label3.Location = new System.Drawing.Point(351, 13);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(35, 13);
             this.label3.TabIndex = 17;
@@ -198,7 +203,7 @@ namespace Aux_gpu
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(625, 43);
+            this.label4.Location = new System.Drawing.Point(355, 39);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(31, 13);
             this.label4.TabIndex = 18;
@@ -207,7 +212,7 @@ namespace Aux_gpu
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(624, 69);
+            this.label5.Location = new System.Drawing.Point(354, 65);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(32, 13);
             this.label5.TabIndex = 19;
@@ -216,7 +221,7 @@ namespace Aux_gpu
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(621, 95);
+            this.label6.Location = new System.Drawing.Point(351, 91);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(0, 13);
             this.label6.TabIndex = 20;
@@ -224,7 +229,7 @@ namespace Aux_gpu
             // but_save_stl
             // 
             this.but_save_stl.BackColor = System.Drawing.SystemColors.Control;
-            this.but_save_stl.Location = new System.Drawing.Point(515, 43);
+            this.but_save_stl.Location = new System.Drawing.Point(662, 114);
             this.but_save_stl.Name = "but_save_stl";
             this.but_save_stl.Size = new System.Drawing.Size(100, 41);
             this.but_save_stl.TabIndex = 21;
@@ -234,7 +239,7 @@ namespace Aux_gpu
             // 
             // tb_model_name
             // 
-            this.tb_model_name.Location = new System.Drawing.Point(423, 17);
+            this.tb_model_name.Location = new System.Drawing.Point(570, 88);
             this.tb_model_name.Name = "tb_model_name";
             this.tb_model_name.Size = new System.Drawing.Size(192, 20);
             this.tb_model_name.TabIndex = 22;
@@ -282,11 +287,25 @@ namespace Aux_gpu
             this.label_no_sol.Size = new System.Drawing.Size(0, 13);
             this.label_no_sol.TabIndex = 27;
             // 
+            // toolTip_pores
+            // 
+            this.toolTip_pores.Popup += new System.Windows.Forms.PopupEventHandler(this.toolTip_pores_Popup);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(12, 142);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(80, 13);
+            this.label9.TabIndex = 28;
+            this.label9.Text = "Конфигурации";
+            // 
             // Scene
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.label_no_sol);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.tb_porose_eps);
@@ -345,6 +364,8 @@ namespace Aux_gpu
         private System.Windows.Forms.TextBox tb_porose_eps;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label_no_sol;
+        private System.Windows.Forms.ToolTip toolTip_pores;
+        private System.Windows.Forms.Label label9;
     }
 }
 
